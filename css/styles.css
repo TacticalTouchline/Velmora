@@ -43,3 +43,15 @@ h1, h2, h3 {
     fill: rgba(0, 0, 0) !important;
     opacity: 0.8;
 }
+
+.club-marker {
+  pointer-events: auto;
+  cursor: pointer;
+  stroke: white;
+  stroke-width: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.club-marker:hover {
+  stroke: #FFD700;
+  stroke-width: 2;
+}
