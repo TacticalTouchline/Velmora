@@ -1,0 +1,45 @@
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: #0d1b2a;
+    color: #e5eef2;
+}
+h1, h2, h3 {
+    font-family: 'Cinzel', serif;
+}
+.map-container {
+    position: relative;
+    width: 100%;
+    background-color: #1a2a40;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.map-region {
+    cursor: pointer;
+    transition: fill 0.3s ease-in-out, stroke 0.3s ease, opacity 0.3s ease;
+    fill: rgba(255, 255, 255, 0.1);
+}
+/* Region hover colors */
+#central-velmora:hover { fill: rgba(248, 190, 54, 0.4); }
+#northern-highlands:hover { fill: rgba(230, 239, 240, 0.4); }
+#southern-lakes:hover { fill: rgba(81, 158, 204, 0.4); }
+#eastern-reaches:hover { fill: rgba(110, 152, 68, 0.4); }
+#western-plateau:hover { fill: rgba(157, 113, 76, 0.4); }
+#northern-bay:hover { fill: rgba(83, 161, 205, 0.4); }
+
+/* Region active colors */
+#central-velmora .map-region.active { fill: rgba(248, 190, 54, 0.4) !important; }
+#northern-highlands .map-region.active { fill: rgba(230, 239, 240, 0.4) !important; }
+#southern-lakes .map-region.active { fill: rgba(81, 158, 204, 0.4) !important; }
+#eastern-reaches .map-region.active { fill: rgba(110, 152, 68, 0.4) !important; }
+#western-plateau .map-region.active { fill: rgba(157, 113, 76, 0.4) !important; }
+#northern-bay .map-region.active { fill: rgba(83, 161, 205, 0.4) !important; }
+
+.map-region.active {
+    stroke: #ffd700;
+    stroke-width: 1;
+}
+
+.map-region.dimmed {
+    fill: rgba(0, 0, 0) !important;
+    opacity: 0.8;
+}
