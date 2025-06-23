@@ -1,5 +1,25 @@
-<!-- components/supporters.html -->
-<section>
-  <h2 class="text-xl font-semibold text-amber-300 mb-2">Supporter Profile</h2>
-  <div id="supporter-bar" class="h-4 rounded overflow-hidden flex w-full bg-gray-700"></div>
+<!-- components/clubpage/supporters.html -->
+<section class="p-6">
+  <h2 class="text-xl font-semibold text-amber-300 mb-4">💙 Supporter Profile</h2>
+
+  <!-- Supporter trait bar -->
+  <div class="relative h-6 w-full bg-white/10 rounded overflow-hidden mb-2">
+    <div id="supporter-bar" class="absolute top-0 left-0 w-full h-full flex">
+
+    </div>
+  </div>
+
+  <!-- Fan clubs section -->
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold text-amber-200 mb-2">🎉 Major Fan Clubs</h3>
+    <ul id="fan-clubs" class="list-disc list-inside text-sm text-gray-200 space-y-1"></ul>
+  </div>
+
+  <!-- Fan quotes -->
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold text-amber-200 mb-2">💬 Voices of the Faithful</h3>
+    <div id="fan-quotes" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-200 animate-fade-in">
+      <!-- Quotes will be injected here -->
+    </div>
+  </div>
 </section>

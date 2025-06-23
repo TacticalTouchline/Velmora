@@ -33,6 +33,7 @@ async function renderClubPage(club) {
     'alumni',
     'rivals-and-derbies',
     'supporters',
+    'footer',
   ];
 
   for (const section of sections) {
@@ -80,6 +81,7 @@ function populateData(root, club) {
 
   root.querySelector('#kit-home')?.setAttribute('src', club.kits?.home || 'https://via.placeholder.com/140');
   root.querySelector('#kit-away')?.setAttribute('src', club.kits?.away || 'https://via.placeholder.com/140');
+  
   if (club.kits) {
   const home = root.querySelector('#kit-home');
   if (home) {
@@ -119,7 +121,7 @@ function populateData(root, club) {
     `;
     root.querySelector('#kits-grid')?.appendChild(thirdKit);
   }
-}
+  }
 
   if (club.competition_history && root.querySelector('#club-honors')) {
     const honorsEl = root.querySelector('#club-honors');
@@ -142,7 +144,11 @@ function populateData(root, club) {
     for (const [trait, value] of Object.entries(club.supporter_profile)) {
       const segment = document.createElement('div');
       segment.style.width = `${(value / total) * 100}%`;
-      segment.className = 'h-full';
+      segment.className = 'h-full relative flex items-center justify-center';
+      segment.innerHTML = `<span class="hidden md:block text-[10px] text-white font-semibold">
+        ${trait.charAt(0).toUpperCase() + trait.slice(1)}
+      </span>`;
+
       segment.title = `${trait}: ${value}`;
       segment.style.backgroundColor = {
         loyalty: '#16a34a',
@@ -154,6 +160,39 @@ function populateData(root, club) {
       }[trait] || '#888';
       bar.appendChild(segment);
     }
+    
+  // 🎉 Fan Clubs
+  if (Array.isArray(club.fan_clubs)) {
+    const list = root.querySelector('#fan-clubs');
+    list.innerHTML = ''; // clear defaults
+    for (const fanClub of club.fan_clubs) {
+      const li = document.createElement('li');
+      li.textContent = fanClub;
+      list.appendChild(li);
+    }
+  }
+
+  // 💬 Fan Quotes
+  if (Array.isArray(club.supporter_quotes)) {
+    const quoteWrap = root.querySelector('#fan-quotes');
+    quoteWrap.innerHTML = ''; // clear defaults
+    for (const q of club.supporter_quotes) {
+      const block = document.createElement('div');
+      block.className =
+        'bg-gradient-to-br from-amber-500/10 to-blue-800/10 border border-blue-700 p-4 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 backdrop-blur-sm';
+
+      block.innerHTML = `
+        <p class="italic">“${q.text}”</p>
+        <p class="text-xs text-right text-amber-400">— ${q.author}</p>
+      `;
+      quoteWrap.appendChild(block);
+    }
+  }
+  }
+
+  // 📣 Club Slogan
+  if (club.club_slogan && root.querySelector('#supporter-chant')) {
+    root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
   }
 
   if (club.rivals && root.querySelector('#rival-strip')) {
@@ -235,8 +274,7 @@ ${
       strip.scrollBy({ left: 200, behavior: 'smooth' });
     });
   }, 0);
-}
-
+  }
 
   if (club.club_history && root.querySelector('#club-history')) {
     root.querySelector('#club-history').textContent = club.club_history;
@@ -256,56 +294,56 @@ ${
       }
     }
   }
-if (club.schedule && root.querySelector('#match-strip')) {
-  const strip = root.querySelector('#match-strip');
-  const today = new Date();
 
-  for (const match of club.schedule) {
-    const matchDate = new Date(match.date);
-    const isPast = matchDate < today;
-    const hasScore = !!match.score;
+  if (club.schedule && root.querySelector('#match-strip')) {
+    const strip = root.querySelector('#match-strip');
+    const today = new Date();
 
-    // Basic result logic from score
-    let bg = 'bg-white/10';
-    let scoreHTML = '';
-    if (hasScore) {
-    let homeScore = null, awayScore = null;
-    if (typeof match.score === 'string' && match.score.includes('-')) {
-      [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
+    for (const match of club.schedule) {
+      const matchDate = new Date(match.date);
+      const isPast = matchDate < today;
+      const hasScore = !!match.score;
+
+      // Basic result logic from score
+      let bg = 'bg-white/10';
+      let scoreHTML = '';
+      if (hasScore) {
+      let homeScore = null, awayScore = null;
+      if (typeof match.score === 'string' && match.score.includes('-')) {
+        [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
+      }
+        const clubIsHome = match.home;
+        const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
+        const draw = homeScore === awayScore;
+        bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
+        scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
+      }
+
+      const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
+      const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
+
+      const card = document.createElement('div');
+      card.className = `min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
+
+      card.innerHTML = `
+        <div class="flex items-baseline justify-between gap-2">
+            <div class="text-xs text-gray-300 font-medium">${match.date}</div>
+            <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+          ${
+            hasScore
+              ? scoreHTML
+              : '<span class="text-gray-400 font-semibold text-sm">vs</span>'
+          }
+          <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+        </div>
+      `;
+
+      strip.appendChild(card);
     }
-      const clubIsHome = match.home;
-      const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
-      const draw = homeScore === awayScore;
-      bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
-      scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
-    }
-
-    const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
-    const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
-
-    const card = document.createElement('div');
-    card.className = `min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
-
-    card.innerHTML = `
-      <div class="flex items-baseline justify-between gap-2">
-          <div class="text-xs text-gray-300 font-medium">${match.date}</div>
-          <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
-      </div>
-      <div class="flex items-center justify-center gap-2">
-        <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-        ${
-          hasScore
-            ? scoreHTML
-            : '<span class="text-gray-400 font-semibold text-sm">vs</span>'
-        }
-        <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-      </div>
-    `;
-
-    strip.appendChild(card);
   }
-}
-
 
 }
 

@@ -23,7 +23,7 @@ export const regionData = {
                   coord: [200, 210],
                   club_history: "The club was founded.",
                   club_values: [],
-                  club_slogan: "",
+                  club_slogan: "We bleed steel and roar fire!",
                   competition_history:{
                     TVC:{
                       winnerIn: [1930, 1936],
@@ -98,6 +98,17 @@ export const regionData = {
                       venue: "Braknov Steel Field",
                       score: null
                     }
+                  ],
+                  fan_clubs: [
+                    "The Iron Eagles Union",
+                    "Forge Side Ultras",
+                    "Capital Roar Collective"
+                  ],
+                  supporter_quotes: [
+                    { text: "Every matchday is a pilgrimage. This club runs in my blood.", author: "Mira D., North Stand" },
+                    { text: "We don’t support, we embody the roar.", author: "Hadi R., Ultras Core" },
+                    { text: "Win or lose, it’s our anthem that echoes the loudest.", author: "Lior G., South Curve" },
+                    { text: "From the streets of Valdren to the heart of the Forge — we never miss a beat.", author: "Kaela V., City Chant Crew" }
                   ]
                 }],
             }, 
