@@ -190,7 +190,6 @@ function populateData(root, club) {
   }
   }
 
-  // 📣 Club Slogan
   if (club.club_slogan && root.querySelector('#supporter-chant')) {
     root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
   }
@@ -295,55 +294,86 @@ ${
     }
   }
 
-  if (club.schedule && root.querySelector('#match-strip')) {
-    const strip = root.querySelector('#match-strip');
-    const today = new Date();
+  // Insert this inside populateData()
+if (club.schedule && root.querySelector('#match-strip')) {
+  const strip = root.querySelector('#match-strip');
+  const today = new Date();
 
-    for (const match of club.schedule) {
-      const matchDate = new Date(match.date);
-      const isPast = matchDate < today;
-      const hasScore = !!match.score;
+  let nextMatchMarked = false;
+  for (const match of club.schedule) {
+    const matchDate = new Date(match.date);
+    const isPast = matchDate < today;
+    const isUpcoming = !match.score && !isPast;
+    const hasScore = !!match.score;
 
-      // Basic result logic from score
-      let bg = 'bg-white/10';
-      let scoreHTML = '';
-      if (hasScore) {
+    // Background color based on result
+    let bg = 'bg-white/10';
+    let scoreHTML = '';
+    if (hasScore) {
       let homeScore = null, awayScore = null;
       if (typeof match.score === 'string' && match.score.includes('-')) {
         [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
       }
-        const clubIsHome = match.home;
-        const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
-        const draw = homeScore === awayScore;
-        bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
-        scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
-      }
-
-      const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
-      const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
-
-      const card = document.createElement('div');
-      card.className = `min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
-
-      card.innerHTML = `
-        <div class="flex items-baseline justify-between gap-2">
-            <div class="text-xs text-gray-300 font-medium">${match.date}</div>
-            <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
-        </div>
-        <div class="flex items-center justify-center gap-2">
-          <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-          ${
-            hasScore
-              ? scoreHTML
-              : '<span class="text-gray-400 font-semibold text-sm">vs</span>'
-          }
-          <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-        </div>
-      `;
-
-      strip.appendChild(card);
+      const clubIsHome = match.home;
+      const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
+      const draw = homeScore === awayScore;
+      bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
+      scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
     }
+
+    const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
+    const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
+
+    const card = document.createElement('div');
+    card.className = `relative min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
+    if (isUpcoming && !nextMatchMarked) {
+      card.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
+      card.dataset.upcoming = 'true';
+      card.dataset.showNextLabel = 'true';
+      nextMatchMarked = true;
+    }
+
+
+    card.innerHTML = `
+      ${card.dataset.showNextLabel === 'true' ? '<div class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Next</div>' : ''}
+      <div class="flex items-baseline justify-between gap-2">
+        <div class="text-xs text-gray-300 font-medium">${match.date}</div>
+        <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
+      </div>
+      <div class="flex items-center justify-center gap-2">
+        <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+        ${hasScore ? scoreHTML : '<span class="text-gray-400 font-semibold text-sm">vs</span>'}
+        <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+      </div>
+    `;
+
+    strip.appendChild(card);
   }
+
+  // Scroll to upcoming match
+  setTimeout(() => {
+    const upcomingCard = strip.querySelector('[data-upcoming="true"]');
+    if (upcomingCard) {
+      const offset = upcomingCard.offsetLeft - strip.offsetWidth / 2 + upcomingCard.offsetWidth / 2;
+      strip.scrollTo({ left: offset, behavior: 'smooth' });
+    }
+
+    const leftBtn = document.getElementById('match-left');
+    const rightBtn = document.getElementById('match-right');
+    if (!leftBtn || !rightBtn) return;
+
+    leftBtn.addEventListener('click', () => {
+      strip.scrollBy({ left: -200, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      strip.scrollBy({ left: 200, behavior: 'smooth' });
+    });
+  }, 100);
+}
+
+
+
 
 }
 

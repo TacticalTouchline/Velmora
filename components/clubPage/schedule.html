@@ -1,7 +1,12 @@
-<!-- components/clubpage/schedule.html -->
-<section>
-  <div id="match-strip" class="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-transparent py-1">
+<!-- components/clubPage/schedule.html -->
+<section class="relative">
+  <div id="match-strip" class="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth py-1">
     <!-- Match cards will be injected here -->
   </div>
+  <button id="match-left" class="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-800/70 hover:bg-blue-700 text-white p-1 rounded-full shadow-md z-10">
+    ◀
+  </button>
+  <button id="match-right" class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-800/70 hover:bg-blue-700 text-white p-1 rounded-full shadow-md z-10">
+    ▶
+  </button>
 </section>
-
