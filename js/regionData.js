@@ -25,18 +25,27 @@ export const regionData = {
                   club_values: [],
                   club_slogan: "",
                   competition_history:{
+                    TVC:{
+                      winnerIn: [1930, 1936],
+                    },
                     VSL:{
                       winnerIn: [1924, 1935, 1946, 1961, 1963, 1967, 1968, 1969, 1973, 1974, 1977, 1989, 1995, 2006, 2010, 2015, 2016, 2022, 2023, ],
                     },
                     VNN:{
                       winnerIn: [],
                     },
-                    VRL:{
+                    VERL:{
                       winnerIn: [],
                     },
-                    TVC:{
+                    VWRL:{
                       winnerIn: [],
-                    }
+                    },                    
+                    VNRL:{
+                      winnerIn: [],
+                    },                    
+                    VSRL:{
+                      winnerIn: [],
+                    },
                   },
                   kits: {
                     home: "assets/kits/valatk/home.svg",
@@ -55,8 +64,8 @@ export const regionData = {
                   ],
                   players_alumni: {
                     favorites: ["fav"],
-                    icons: ["icon"],
-                    legends: ["legend"],
+                    icons: ["icon", "icon", "icon", "icon"],
+                    legends: ["legend", "legend", "legend", "legend", "legend", "legend", ],
                   }
                 },
               ],

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-blue-950 text-gray-200">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" id="favicon" href="favicon.png" />
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const club = params.get('club');
+    if (club) {
+      document.title = club;
+      const favicon = document.getElementById('favicon');
+      favicon.href = `assets/club_logos/${encodeURIComponent(club)}.png`;
+    }
+  </script>
+</head>
+<body class="font-sans min-h-screen p-6">
+  <main id="club-container" class="max-w-5xl mx-auto space-y-6">
+    <!-- Sections will be dynamically loaded here -->
+  </main>
+
+  <!-- Dependencies -->
+  <script type="module" src="js/clubPage.js"></script>
+</body>
+</html>

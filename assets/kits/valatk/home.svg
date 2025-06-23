@@ -1,0 +1,68 @@
+<svg id="Layer_1" data-name="Layer 1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 120">
+    <defs>
+        <style>.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-8{fill-rule:evenodd;}.cls-2{fill:#0c174b;}.cls-3{mask:url(#mask);}.cls-4{mask:url(#mask-2-2);}.cls-5{opacity:0.7;}.cls-6{fill:#79af37;}.cls-7{mask:url(#mask-3);}.cls-8{fill:#fff;}.cls-9{mask:url(#mask-4-2);}</style>
+        <mask id="mask" x="4" y="-7.34" width="109.32" height="125.96" maskUnits="userSpaceOnUse">
+            <g id="mask-2">
+                <path id="path-1" class="cls-1" d="M4,49.74A57.94,57.94,0,0,0,23.16,60.67L27,52.85Q32,78.4,26.41,109.62c.22,0,17.33,7.5,32.06,7.5s31.32-7.5,31.51-7.5q-4.55-30.5.17-56.77l4,7.82Q107,56,113.32,49.74c-9.52-15.88-12.11-29.66-17.63-34.26Q90.19,10.89,72.16,4H46.22Q26.5,10.56,21.65,15.48C16.81,20.41,14.8,31.85,4,49.74Z"/>
+            </g>
+        </mask>
+        <mask id="mask-2-2" x="20.08" y="-7.34" width="79.57" height="127.34" maskUnits="userSpaceOnUse">
+            <g id="mask-4">
+                <path id="path-3" class="cls-1" d="M24.05,112.16,27.1,53.85Q27.17,29.44,21,9.25T53.21.44H76.74q28.58-17.52,21.5,4.4t-8.18,49l2.19,59.8-33.49,5Z"/>
+            </g>
+        </mask>
+        <mask id="mask-3" x="2" y="4" width="111.32" height="113.12" maskUnits="userSpaceOnUse">
+            <g id="mask-2-3" data-name="mask-2">
+                <path id="path-1-2" data-name="path-1" class="cls-1" d="M4,49.74A57.94,57.94,0,0,0,23.16,60.67L27,52.85Q32,78.4,26.41,109.62c.22,0,17.33,7.5,32.06,7.5s31.32-7.5,31.51-7.5q-4.55-30.5.17-56.77l4,7.82Q107,56,113.32,49.74c-9.52-15.88-12.11-29.66-17.63-34.26Q90.19,10.89,72.16,4H46.22Q26.5,10.56,21.65,15.48C16.81,20.41,14.8,31.85,4,49.74Z"/>
+            </g>
+        </mask>
+        <mask id="mask-4-2" x="4" y="4" width="112.53" height="113.12" maskUnits="userSpaceOnUse">
+            <g id="mask-2-4" data-name="mask-2">
+                <path id="path-1-3" data-name="path-1" class="cls-1" d="M4,49.74A57.94,57.94,0,0,0,23.16,60.67L27,52.85Q32,78.4,26.41,109.62c.22,0,17.33,7.5,32.06,7.5s31.32-7.5,31.51-7.5q-4.55-30.5.17-56.77l4,7.82Q107,56,113.32,49.74c-9.52-15.88-12.11-29.66-17.63-34.26Q90.19,10.89,72.16,4H46.22Q26.5,10.56,21.65,15.48C16.81,20.41,14.8,31.85,4,49.74Z"/>
+            </g>
+        </mask>
+    </defs>
+    <title>14</title>
+    <g id="Page-1">
+        <g id="Path-3-2" data-name="Path-3">
+            <path class="cls-2" d="M4,49.74A57.94,57.94,0,0,0,23.16,60.67L27,52.85Q32,78.4,26.41,109.62c.22,0,17.33,7.5,32.06,7.5s31.32-7.5,31.51-7.5q-4.55-30.5.17-56.77l4,7.82Q107,56,113.32,49.74c-9.52-15.88-12.11-29.66-17.63-34.26Q90.19,10.89,72.16,4H46.22Q26.5,10.56,21.65,15.48C16.81,20.41,14.8,31.85,4,49.74Z"/>
+        </g>
+        <g class="cls-3">
+            <g id="Group-2">
+                <g id="Path-13">
+                    <path class="cls-2" d="M24.05,112.16,27.1,53.85Q27.17,29.44,21,9.25T53.21.44H76.74q28.58-17.52,21.5,4.4t-8.18,49l2.19,59.8-33.49,5Z"/>
+                </g>
+                <g class="cls-4">
+                    <g id="Group" class="cls-5">
+                        <rect id="Rectangle-81-Copy-8" class="cls-6" x="21" y="74" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-9" class="cls-6" x="21" y="65" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-10" class="cls-6" x="21" y="56" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-11" class="cls-6" x="21" y="47" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-12" class="cls-6" x="21" y="38" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-13" class="cls-6" x="21" y="29" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-14" class="cls-6" x="21" y="20" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-15" class="cls-6" x="21" y="11" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-28" class="cls-6" x="21" y="119" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-27" class="cls-6" x="21" y="110" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-26" class="cls-6" x="21" y="101" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-25" class="cls-6" x="21" y="92" width="78" height="1"/>
+                        <rect id="Rectangle-81-Copy-24" class="cls-6" x="21" y="83" width="78" height="1"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <g class="cls-7">
+            <path id="Path-6" class="cls-8" d="M5.08,46.14A67.68,67.68,0,0,0,25.9,58q1.77,1.5-1.29,3.34L9.54,57,2,47.11Z"/>
+        </g>
+        <g class="cls-9">
+            <path id="Path-6-Copy" class="cls-8" d="M113.23,46A65,65,0,0,1,92.65,57.83q-1.77,1.5,1.26,3.52L116,50.45l.49-3.34Z"/>
+        </g>
+        <path id="Path-4" class="cls-8" d="M46.42,3H71.74l2.71,1.81a98.79,98.79,0,0,1-16,1.45A77.06,77.06,0,0,1,43.69,4.81Z"/>
+        <g id="Shirt-Collar">
+            <path class="cls-8" d="M59,3H71.91l2,1.4s1.15,4-7.4,7A36,36,0,0,1,59,12.62a36.29,36.29,0,0,1-7.55-1.24c-8.56-3-7.4-7-7.4-7l2-1.4Z"/>
+            <path id="Combined-Shape" class="cls-2" d="M58,10c-10.89.19-10-6-10-6H71s1,6.36-11.38,6C59,10,58.51,10,58,10Z"/>
+        </g>
+    </g>
+</svg>
