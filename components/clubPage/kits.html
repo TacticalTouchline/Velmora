@@ -1,14 +1,28 @@
-<!-- components/clubPage/kits.html -->
-<section>
-  <h2 class="text-xl font-semibold text-amber-300 mb-2">Club Kits</h2>
-  <div class="flex gap-4 items-center">
-    <div class="text-center">
-      <img id="kit-home" class="h-16 mx-auto" alt="Home Kit" />
-      <p class="text-sm mt-1 text-gray-400">Home</p>
+<!-- components/clubpage/kits-store.html -->
+<section class="p-6">
+  <h2 class="text-xl font-semibold text-amber-300 mb-4">👕 Club Kits</h2>
+  <div id="kits-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <!-- Home Kit -->
+    <div class="bg-white/5 rounded-xl p-4 text-center">
+      <img id="kit-home" class="w-2/3 mx-auto object-contain mb-2"
+        onmouseover="this.src=this.dataset.back" 
+        onmouseout="this.src=this.dataset.front" 
+        data-front="" 
+        data-back="" 
+        alt="Home Kit"/>
+      <p class="text-sm text-gray-300">Home Kit<br/><span class='text-xs text-green-400 font-semibold'>$39.99</span><br/><button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button></p>
     </div>
-    <div class="text-center">
-      <img id="kit-away" class="h-16 mx-auto" alt="Away Kit" />
-      <p class="text-sm mt-1 text-gray-400">Away</p>
+    <!-- Away Kit -->
+    <div class="bg-white/5 rounded-xl p-4 text-center">
+      <img id="kit-away" class="w-2/3 mx-auto object-contain mb-2"
+        onmouseover="this.src=this.dataset.back" 
+        onmouseout="this.src=this.dataset.front" 
+        data-front="" 
+        data-back="" 
+        alt="Away Kit"/>
+      <p class="text-sm text-gray-300">Away Kit<br/><span class='text-xs text-green-400 font-semibold'>$29.99</span><br/><button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button></p>
     </div>
+    <!-- Optional Third Kit -->
+    
   </div>
 </section>

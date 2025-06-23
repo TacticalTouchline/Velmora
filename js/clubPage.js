@@ -26,15 +26,13 @@ async function renderClubPage(club) {
 
   const sections = [
     'header',
-    'info',
+    'schedule',
+    'hero', 
+    'history-and-honors',
     'kits',
-    'honors',
-    'supporters',
-    'rivals',
-    'derbies',
-    'history',
     'alumni',
-    'schedule'
+    'rivals-and-derbies',
+    'supporters',
   ];
 
   for (const section of sections) {
@@ -49,7 +47,29 @@ async function renderClubPage(club) {
 }
 
 function populateData(root, club) {
-  root.querySelector('#club-logo')?.setAttribute('src', `assets/logos/clubs/${encodeURIComponent(club.name)}.png`);
+  if (club.colors?.length >= 2) {
+    const header = root.querySelector('#club-header');
+    if (header) {
+      header.style.setProperty('--club-color-primary', club.colors[0]);
+      header.style.setProperty('--club-color-secondary', club.colors[1]);
+    }
+  }
+
+  // 🏟️ Populate hero section
+  const stadiumImg = root.querySelector('#club-stadium-image');
+  if (stadiumImg) stadiumImg.src = club.stadium_image || 'https://via.placeholder.com/1200x800?text=Stadium+Image';
+
+  const heroName = root.querySelector('#hero-club-name');
+  if (heroName) heroName.textContent = club.name;
+
+  const heroStadium = root.querySelector('#hero-club-stadium');
+  if (heroStadium) heroStadium.textContent = `🏟️ ${club.stadium}`;
+
+  const heroFounded = root.querySelector('#hero-club-founded span');
+  if (heroFounded) heroFounded.textContent = club.founded;
+
+
+  root.querySelector('#club-logo')?.setAttribute('src', `assets/logos/clubs/normal/${encodeURIComponent(club.name)}.png`);
   root.querySelector('#club-logo')?.setAttribute('alt', `${club.name} Logo`);
   root.querySelector('#club-name') && (root.querySelector('#club-name').textContent = club.name);
   root.querySelector('#club-nickname') && (root.querySelector('#club-nickname').textContent = club.nickname);
@@ -58,8 +78,48 @@ function populateData(root, club) {
   root.querySelector('#club-founded') && (root.querySelector('#club-founded').textContent = club.founded);
   root.querySelector('#club-hashtag') && (root.querySelector('#club-hashtag').textContent = club.hashtag);
 
-  root.querySelector('#kit-home')?.setAttribute('src', club.kits?.home || 'https://via.placeholder.com/40');
-  root.querySelector('#kit-away')?.setAttribute('src', club.kits?.away || 'https://via.placeholder.com/40');
+  root.querySelector('#kit-home')?.setAttribute('src', club.kits?.home || 'https://via.placeholder.com/140');
+  root.querySelector('#kit-away')?.setAttribute('src', club.kits?.away || 'https://via.placeholder.com/140');
+  if (club.kits) {
+  const home = root.querySelector('#kit-home');
+  if (home) {
+    const front = club.kits.home || 'https://via.placeholder.com/140';
+    const back = club.kits.home_back || 'https://via.placeholder.com/140';
+    home.src = front;
+    home.dataset.front = front;
+    home.dataset.back = back;
+  }
+
+  const away = root.querySelector('#kit-away');
+  if (away) {
+    const front = club.kits.away || 'https://via.placeholder.com/140';
+    const back = club.kits.away_back || 'https://via.placeholder.com/140';
+    away.src = front;
+    away.dataset.front = front;
+    away.dataset.back = back;
+  }
+
+  if (club.kits.third) {
+    const thirdKit = document.createElement('div');
+    thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
+    const thirdFront = club.kits.third;
+    const thirdBack = thirdFront.replace(/\\.svg$/, '_back.png');
+
+    thirdKit.innerHTML = `
+      <img src="${thirdFront}" alt="Third Kit"
+           class="w-2/3 mx-auto object-contain mb-2 rounded shadow"
+           onmouseover="this.src=this.dataset.back"
+           onmouseout="this.src=this.dataset.front"
+           data-front="${thirdFront}"
+           data-back="${thirdBack}" />
+      <p class="text-sm text-gray-300">Third Kit<br/>
+        <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
+        <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
+      </p>
+    `;
+    root.querySelector('#kits-grid')?.appendChild(thirdKit);
+  }
+}
 
   if (club.competition_history && root.querySelector('#club-honors')) {
     const honorsEl = root.querySelector('#club-honors');
@@ -69,8 +129,8 @@ function populateData(root, club) {
       trophy.className = 'flex flex-col items-center';
       trophy.title = data.winnerIn.join(', ');
       trophy.innerHTML = `
-        <img src="assets/competitions/${comp}.png" class="h-6 object-contain" />
-        <span class="text-xs text-gray-300 mt-0.5">×${data.winnerIn.length}</span>
+        <img src="assets/competitions/${comp}.png" class="h-60 w-auto object-contain mx-auto" />
+        <span class="text-xl text-gray-300 mt-1 block text-center">×${data.winnerIn.length}</span>
       `;
       honorsEl.appendChild(trophy);
     }
@@ -96,33 +156,87 @@ function populateData(root, club) {
     }
   }
 
-  if (club.rivals && root.querySelector('#rival-badges')) {
-    const wrap = root.querySelector('#rival-badges');
-    for (const r of club.rivals) {
-      const badge = document.createElement('img');
-      badge.src = `assets/logos/clubs/${encodeURIComponent(r.club)}.png`;
-      badge.alt = r.club;
-      badge.title = `${r.club} (${r.reason})`;
-      badge.className = `h-6 w-6 rounded-full object-contain bg-white/10 p-0.5 ring-2 ${
-        r.level > 75 ? 'ring-red-500' : r.level > 50 ? 'ring-orange-400' : 'ring-blue-400'
-      }`;
-      wrap.appendChild(badge);
-    }
+  if (club.rivals && root.querySelector('#rival-strip')) {
+  const strip = root.querySelector('#rival-strip');
+  const rivalMap = new Map(club.rivals.map(r => [r.club, r]));
+
+  const derbies = (club.derbies || []).reduce((acc, derby) => {
+    acc[derby.team2] = derby;
+    return acc;
+  }, {});
+
+  for (const rival of club.rivals) {
+    const derby = derbies[rival.club];
+    const logo = `assets/logos/clubs/${encodeURIComponent(rival.club)}.png`;
+
+    const card = document.createElement('div');
+    card.className = `min-w-[180px] bg-white/10 p-4 rounded-lg border border-white/10 shadow text-center flex flex-col items-center justify-between gap-2`;
+
+    card.innerHTML = `
+      <img src="${logo}" alt="${rival.club}" class="h-12 w-12 object-contain bg-white/10 rounded-full" />
+      <div>
+        <h3 class="text-sm font-semibold text-white">${rival.club}</h3>
+        <p class="text-xs text-gray-300 italic">${rival.reason}</p>
+      </div>
+      <div class="text-xs font-medium ${rival.level > 75 ? 'text-red-400' : rival.level > 50 ? 'text-orange-300' : 'text-blue-300'}">
+        Rivalry Level: ${rival.level}
+      </div>
+${
+  derby
+    ? `<div class="bg-blue-800/50 text-xs text-amber-300 px-2 py-1 rounded mt-1">
+         Derby: <strong>${derby.name}</strong>
+       </div>`
+    : ''
+}
+${
+  (() => {
+    const today = new Date();
+    const nextMatch = club.schedule?.find(
+      m => new Date(m.date) >= today && m.opponent === rival.club
+    );
+    if (!nextMatch) return '';
+
+    const isHome = nextMatch.home;
+    const homeLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? club.name : nextMatch.opponent)}.png`;
+    const awayLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? nextMatch.opponent : club.name)}.png`;
+
+    return `
+      <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
+      <div class="bg-white/10 text-xs text-gray-200 rounded px-2 py-1">
+        <div class="font-semibold mb-1 text-center">${nextMatch.date}</div>
+        <div class="flex justify-center items-center gap-2">
+          <img src="${homeLogo}" class="h-5 w-5 rounded object-contain bg-white/10" />
+          <span class="font-medium text-white text-sm">vs</span>
+          <img src="${awayLogo}" class="h-5 w-5 rounded object-contain bg-white/10" />
+        </div>
+        <div class="text-[10px] text-center mt-1">🏟 ${nextMatch.venue}</div>
+      </div>
+    `;
+  })()
+}
+
+
+    `;
+
+    strip.appendChild(card);
   }
 
-  if (club.derbies && root.querySelector('#club-derbies')) {
-    const list = root.querySelector('#club-derbies');
-    for (const d of club.derbies) {
-      const div = document.createElement('div');
-      div.className = 'bg-blue-900/40 p-3 rounded border border-blue-700';
-      div.innerHTML = `
-        <h4 class="text-md font-semibold text-amber-200 mb-1">${d.name}</h4>
-        <p class="text-sm text-gray-300">vs <strong>${d.team2}</strong></p>
-        <p class="text-xs text-gray-400 mt-1">${d.history || '—'}</p>
-      `;
-      list.appendChild(div);
-    }
-  }
+  // Add scroll behavior for slideshow
+  setTimeout(() => {
+    const leftBtn = document.getElementById('rival-left');
+    const rightBtn = document.getElementById('rival-right');
+    if (!leftBtn || !rightBtn) return;
+
+    leftBtn.addEventListener('click', () => {
+      strip.scrollBy({ left: -200, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      strip.scrollBy({ left: 200, behavior: 'smooth' });
+    });
+  }, 0);
+}
+
 
   if (club.club_history && root.querySelector('#club-history')) {
     root.querySelector('#club-history').textContent = club.club_history;
@@ -136,21 +250,63 @@ function populateData(root, club) {
         img.src = `assets/players/${encodeURIComponent(name)}.png`;
         img.alt = name;
         img.title = name;
-        img.className = 'h-10 w-10 rounded-full object-cover bg-white/10';
+        img.className = 'h-20 w-20 rounded-full object-cover bg-white/10';
         // img.onerror = () => (img.src = 'https://via.placeholder.com/40');
         wrap.appendChild(img);
       }
     }
   }
+if (club.schedule && root.querySelector('#match-strip')) {
+  const strip = root.querySelector('#match-strip');
+  const today = new Date();
 
-  if (club.schedule && root.querySelector('#match-schedule')) {
-    const list = root.querySelector('#match-schedule');
-    for (const m of club.schedule) {
-      const li = document.createElement('li');
-      li.innerHTML = `📍 ${m.date} | ${m.home ? 'vs' : '@'} ${m.opponent} | 🏟 ${m.venue} ${m.score ? `| ${m.score}` : ''}`;
-      list.appendChild(li);
+  for (const match of club.schedule) {
+    const matchDate = new Date(match.date);
+    const isPast = matchDate < today;
+    const hasScore = !!match.score;
+
+    // Basic result logic from score
+    let bg = 'bg-white/10';
+    let scoreHTML = '';
+    if (hasScore) {
+    let homeScore = null, awayScore = null;
+    if (typeof match.score === 'string' && match.score.includes('-')) {
+      [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
     }
+      const clubIsHome = match.home;
+      const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
+      const draw = homeScore === awayScore;
+      bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
+      scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
+    }
+
+    const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
+    const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
+
+    const card = document.createElement('div');
+    card.className = `min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
+
+    card.innerHTML = `
+      <div class="flex items-baseline justify-between gap-2">
+          <div class="text-xs text-gray-300 font-medium">${match.date}</div>
+          <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
+      </div>
+      <div class="flex items-center justify-center gap-2">
+        <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+        ${
+          hasScore
+            ? scoreHTML
+            : '<span class="text-gray-400 font-semibold text-sm">vs</span>'
+        }
+        <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
+      </div>
+    `;
+
+    strip.appendChild(card);
   }
+}
+
+
 }
 
 const params = new URLSearchParams(window.location.search);

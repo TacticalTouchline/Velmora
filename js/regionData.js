@@ -21,7 +21,7 @@ export const regionData = {
                   colors: ["#0a173d", "#79af37"], 
                   stadium: "Titan Forge Arena", 
                   coord: [200, 210],
-                  club_history: "",
+                  club_history: "The club was founded.",
                   club_values: [],
                   club_slogan: "",
                   competition_history:{
@@ -49,7 +49,9 @@ export const regionData = {
                   },
                   kits: {
                     home: "assets/kits/valatk/home.svg",
-                    away: "assets/kits/valatk/away.svg"
+                    home_back: "assets/kits/valatk/home_back.svg",
+                    away: "assets/kits/valatk/away.svg",
+                    away_back: "assets/kits/valatk/away_back.svg",
                   },
                   supporter_profile: {loyalty:19,passion:17,patience:10,affluence:10,temprament:8,expectations:14},
                   rivals: [
@@ -66,9 +68,38 @@ export const regionData = {
                     favorites: ["fav"],
                     icons: ["icon", "icon", "icon", "icon"],
                     legends: ["legend", "legend", "legend", "legend", "legend", "legend", ],
-                  }
-                },
-              ],
+                  },
+                  schedule: [
+                    {
+                      date: "2025-07-05",
+                      opponent: "Zarnov Union",
+                      home: true,
+                      venue: "Titan Forge Arena",
+                      score: "2-1"
+                    },
+                    {
+                      date: "2025-07-12",
+                      opponent: "Velgrad '04",
+                      home: false,
+                      venue: "Velgrad Central Stadium",
+                      score: "3-1"
+                    },
+                    {
+                      date: "2025-07-19",
+                      opponent: "Sevrin Lokomotiv",
+                      home: true,
+                      venue: "Titan Forge Arena",
+                      score: null
+                    },
+                    {
+                      date: "2025-07-26",
+                      opponent: "Braknov Spartak",
+                      home: false,
+                      venue: "Braknov Steel Field",
+                      score: null
+                    }
+                  ]
+                }],
             }, 
             "Zarnov": {
               climate: "Continental Mild with Seasonal Contrast",
