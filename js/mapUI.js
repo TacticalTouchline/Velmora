@@ -139,7 +139,11 @@ export function setupRegionInteractivity({
         <div class="col-span-2 flex items-center gap-3">
           <img loading="lazy" src="assets/logos/clubs/${encodeURIComponent(club.name)}.png" class="w-12 h-12 object-contain bg-white/10 rounded shrink-0" alt="${club.name} Logo" />
           <div>
-            <h5 class="text-base font-semibold text-amber-200">${club.name}</h5>
+            <a href="club.html?club=${encodeURIComponent(club.name)}" 
+              target="_blank" 
+              class="text-base font-semibold text-amber-200 hover:underline">
+              ${club.name}
+            </a>
             <p class="text-sm text-gray-400 italic">${club.nickname}</p>
           </div>
         </div>
