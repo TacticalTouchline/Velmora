@@ -47,6 +47,7 @@ async function renderClubPage(club) {
   container.appendChild(wrapper);
 }
 
+
 async function populateData(root, club) {
   if (club.colors?.length >= 2) {
     const header = root.querySelector('#club-header');
@@ -202,8 +203,49 @@ async function populateData(root, club) {
   }  
 
   if (club.club_history && root.querySelector('#club-history')) {
-    root.querySelector('#club-history').innerHTML = club.club_history;
+    const container = root.querySelector('#club-history');
+
+    // Create a temporary DOM parser
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = club.club_history;
+
+    const allNodes = Array.from(tempDiv.childNodes);
+
+    let visibleContent = '';
+    let h3Count = 0;
+
+    for (const node of allNodes) {
+      if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'h3') {
+        h3Count++;
+      }
+
+      visibleContent += node.outerHTML ?? node.textContent;
+
+      if (h3Count === 2) break;
+    }
+
+    const fullContent = tempDiv.innerHTML;
+
+    const contentWrapper = document.createElement('div');
+    const toggleBtn = document.createElement('button');
+
+    contentWrapper.innerHTML = visibleContent;
+    toggleBtn.textContent = 'Read More';
+    toggleBtn.className = 'text-blue-400 underline text-sm mt-2 block';
+
+    let expanded = false;
+
+    toggleBtn.addEventListener('click', () => {
+      expanded = !expanded;
+      contentWrapper.innerHTML = expanded ? fullContent : visibleContent;
+      toggleBtn.textContent = expanded ? 'Read Less' : 'Read More';
+    });
+
+    container.innerHTML = '';
+    container.appendChild(contentWrapper);
+    container.appendChild(toggleBtn);
   }
+
 
   // if (club.kits) {
   // const home = root.querySelector('#kit-home');
@@ -507,72 +549,110 @@ async function populateData(root, club) {
       bar.appendChild(segment);
     }
     
-// 🎉 Fan Clubs
-if (Array.isArray(club.fan_clubs)) {
-  const list = root.querySelector('#fan-clubs');
-  list.innerHTML = ''; // Clear existing content
+    // 🎉 Fan Clubs
+    if (Array.isArray(club.fan_clubs)) {
+      const list = root.querySelector('#fan-clubs');
+      list.innerHTML = ''; // Clear existing content
 
-  for (const fanClub of club.fan_clubs) {
-    // Create the outer card container
-    const card = document.createElement('div');
-    card.className = 'text-sm shadow-md rounded-lg p-2 bg-white/10 border border-white/10 shadow divide-y divide-gray-300 divide-opacity-30';
+      for (const fanClub of club.fan_clubs) {
+        // Create the outer card container
+        const card = document.createElement('div');
+        card.className = 'text-sm shadow-md rounded-lg p-2 bg-white/10 border border-white/10 shadow divide-y divide-gray-300 divide-opacity-30';
 
-    const banner = document.createElement('img');
-    banner.src = `assets/fanClubs/${fanClub}.png` || 'https://via.placeholder.com/140';
-    banner.className = "h-12 w-auto rounded-full object-cover bg-white/10 mb-4"
+        const banner = document.createElement('img');
+        banner.src = `assets/fanClubs/${fanClub}.png`;
+        banner.className = "h-12 w-full rounded-full object-cover bg-white/10 mb-4"
+        banner.onerror = () => {
+          banner.src =  `https://picsum.photos/seed/${fanClub.replace(' ', '')}/800/200`;
+        }
 
-    // Fan club name
-    const name = document.createElement('p');
-    name.className = 'text-md text-center font-bold pt-2 mb-2';
-    name.textContent = fanClub || 'Unnamed Fan Club';
+        // Fan club name
+        const name = document.createElement('p');
+        name.className = 'text-md text-center font-bold pt-2 mb-2';
+        name.textContent = fanClub || 'Unnamed Fan Club';
 
-    const iconRow = document.createElement('div');
-    iconRow.className = 'flex items-center justify-center pt-2 text-md divide-x divide-gray-300 divide-opacity-30';
+        const iconRow = document.createElement('div');
+        iconRow.className = 'flex items-center justify-center pt-2 text-md divide-x divide-gray-300 divide-opacity-30';
 
-    // Helper function to wrap each icon in a span with padding
-    const createIcon = (emoji) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'w-full text-center'; // horizontal padding for space around dividers
-      wrapper.textContent = emoji;
-      return wrapper;
-    };
+        // Helper function to wrap each icon in a span with padding
+        const createIcon = (emoji) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'w-full text-center'; // horizontal padding for space around dividers
+          wrapper.textContent = emoji;
+          return wrapper;
+        };
 
-    iconRow.appendChild(createIcon('📍'));
-    iconRow.appendChild(createIcon('📅'));
-    iconRow.appendChild(createIcon('📰'));
+        iconRow.appendChild(createIcon('📍'));
+        iconRow.appendChild(createIcon('📅'));
+        iconRow.appendChild(createIcon('📰'));
 
-    // Append elements to card
-    card.appendChild(banner);
-    card.appendChild(name);
-    card.appendChild(iconRow);
+        // Append elements to card
+        card.appendChild(banner);
+        card.appendChild(name);
+        card.appendChild(iconRow);
 
-    // Append card to the list container
-    list.appendChild(card);
-  }
-}
-
-
-  // 💬 Fan Quotes
-  if (Array.isArray(club.supporter_quotes)) {
-    const quoteWrap = root.querySelector('#fan-quotes');
-    quoteWrap.innerHTML = ''; // clear defaults
-    for (const q of club.supporter_quotes) {
-      const block = document.createElement('div');
-      block.className =
-        'bg-gradient-to-br from-amber-500/10 to-blue-800/10 border border-blue-700 p-4 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 backdrop-blur-sm';
-
-      block.innerHTML = `
-        <p class="italic">“${q.text}”</p>
-        <p class="text-xs text-right text-amber-400">— ${q.author}</p>
-      `;
-      quoteWrap.appendChild(block);
+        // Append card to the list container
+        list.appendChild(card);
+      }
     }
-  }
+
+    // 💬 Fan Quotes
+    if (Array.isArray(club.supporter_quotes)) {
+      const quoteWrap = root.querySelector('#fan-quotes');
+      quoteWrap.innerHTML = ''; // clear defaults
+
+      for (const q of club.supporter_quotes) {
+        const block = document.createElement('div');
+
+        const length = q.text.length;
+        const shortText = q.text.slice(0, 150) + '...';
+
+        // Determine column span based on text length
+        let colSpanClass = '';
+        if (length > 360) {
+          colSpanClass = 'md:col-span-4';
+        } else if (length > 180) {
+          colSpanClass = 'md:col-span-2';
+        } // else col-span-1 (default, no class needed)
+
+        block.className = `
+          ${colSpanClass}
+          flex flex-col justify-between 
+          bg-gradient-to-br from-amber-500/10 to-blue-800/10 
+          border border-gray-200/10 p-4 rounded-xl shadow-lg 
+          transform transition-all hover:scale-105 duration-300 
+          backdrop-blur-sm
+        `.trim();
+
+        const isTruncated = length > 150;
+
+        block.innerHTML = `
+          <p class="italic quote-text">“${isTruncated ? shortText : q.text}”</p>
+          ${isTruncated ? '<button class="toggle-quote text-sm text-blue-600 font-semibold mt-2 self-end">Read More</button>' : ''}
+          <p class="text-xs text-right text-amber-400">— ${q.author}</p>
+        `;
+
+        if (isTruncated) {
+          const quoteText = block.querySelector('.quote-text');
+          const toggleBtn = block.querySelector('.toggle-quote');
+          let expanded = false;
+
+          toggleBtn.addEventListener('click', () => {
+            expanded = !expanded;
+            quoteText.textContent = `“${expanded ? q.text : shortText}”`;
+            toggleBtn.textContent = expanded ? 'Read Less' : 'Read More';
+          });
+        }
+
+        quoteWrap.appendChild(block);
+      }
+    }
   }
 
   if (club.club_slogan && root.querySelector('#supporter-chant')) {
     root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
   }
+
 }
 
 const params = new URLSearchParams(window.location.search);
