@@ -22,7 +22,7 @@ async function renderClubPage(club) {
   container.innerHTML = '';
 
   const wrapper = document.createElement('div');
-  wrapper.classList.add('flex', 'flex-col', 'gap-6');
+  wrapper.classList.add('flex', 'flex-col', 'gap-4');
 
   const sections = [
     'header',
@@ -47,7 +47,7 @@ async function renderClubPage(club) {
   container.appendChild(wrapper);
 }
 
-function populateData(root, club) {
+async function populateData(root, club) {
   if (club.colors?.length >= 2) {
     const header = root.querySelector('#club-header');
     if (header) {
@@ -59,7 +59,10 @@ function populateData(root, club) {
 
   // 🏟️ Populate hero section
   const stadiumImg = root.querySelector('#club-stadium-image');
-  if (stadiumImg) stadiumImg.src = club.stadium_image || 'https://via.placeholder.com/1200x800?text=Stadium+Image';
+  if (stadiumImg) stadiumImg.src = `assets/stadiums/${encodeURIComponent(club.name)}.png` || 'https://via.placeholder.com/1200x800?text=Stadium+Image';
+
+  const heroClubLogo = root.querySelector('#hero-club-logo');
+  if (heroClubLogo) heroClubLogo.src = club.club_logo || 'https://via.placeholder.com/800x800?text=club+logo';
 
   const heroName = root.querySelector('#hero-club-name');
   if (heroName) heroName.textContent = club.name;
@@ -70,60 +73,119 @@ function populateData(root, club) {
   const heroFounded = root.querySelector('#hero-club-founded span');
   if (heroFounded) heroFounded.textContent = club.founded;
 
+  const heroClubSlogan = root.querySelector('#hero-club-slogan');
+  if (heroClubSlogan) heroClubSlogan.textContent = club.club_slogan;
+
 
   root.querySelector('#club-logo')?.setAttribute('src', `assets/logos/clubs/normal/${encodeURIComponent(club.name)}.png`);
   root.querySelector('#club-logo')?.setAttribute('alt', `${club.name} Logo`);
   root.querySelector('#club-name') && (root.querySelector('#club-name').textContent = club.name);
   root.querySelector('#club-nickname') && (root.querySelector('#club-nickname').textContent = club.nickname);
+  if (club.chants) {root.querySelector('#club-chant') && (root.querySelector('#club-chant').textContent = club.chants[0].lyrics.join('\n'));}
 
   root.querySelector('#club-stadium') && (root.querySelector('#club-stadium').textContent = club.stadium);
   root.querySelector('#club-founded') && (root.querySelector('#club-founded').textContent = club.founded);
   root.querySelector('#club-hashtag') && (root.querySelector('#club-hashtag').textContent = club.hashtag);
 
-  root.querySelector('#kit-home')?.setAttribute('src', club.kits?.home || 'https://via.placeholder.com/140');
-  root.querySelector('#kit-away')?.setAttribute('src', club.kits?.away || 'https://via.placeholder.com/140');
   
-  if (club.kits) {
-  const home = root.querySelector('#kit-home');
-  if (home) {
-    const front = club.kits.home || 'https://via.placeholder.com/140';
-    const back = club.kits.home_back || 'https://via.placeholder.com/140';
-    home.src = front;
-    home.dataset.front = front;
-    home.dataset.back = back;
-  }
+  if (club.schedule && root.querySelector('#match-strip')) {
+    const strip = root.querySelector('#match-strip');
+    const today = new Date(2025, 7, 22);
 
-  const away = root.querySelector('#kit-away');
-  if (away) {
-    const front = club.kits.away || 'https://via.placeholder.com/140';
-    const back = club.kits.away_back || 'https://via.placeholder.com/140';
-    away.src = front;
-    away.dataset.front = front;
-    away.dataset.back = back;
-  }
+    let nextMatchMarked = false;
+    for (const match of club.schedule) {
+      const matchDate = new Date(match.date);
+      const isPast = matchDate < today;
+      const isUpcoming = !match.score && !isPast;
+      const hasScore = !!match.score;
 
-  if (club.kits.third) {
-    const thirdKit = document.createElement('div');
-    thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
-    const thirdFront = club.kits.third;
-    const thirdBack = thirdFront.replace(/\\.svg$/, '_back.png');
+      // Background color based on result
+      let bg = 'bg-white/10';
+      let scoreHTML = '';
+      if (hasScore) {
+        let homeScore = null, awayScore = null;
+        if (typeof match.score === 'string' && match.score.includes('-')) {
+          [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
+        }
+        const clubIsHome = match.home;
+        const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
+        const draw = homeScore === awayScore;
+        bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
+        scoreHTML = `<div class="text-center text-md font-bold text-gray-200 pt-1">${homeScore} - ${awayScore}</div>`;
+      }
 
-    thirdKit.innerHTML = `
-      <img src="${thirdFront}" alt="Third Kit"
-           class="w-2/3 mx-auto object-contain mb-2 rounded shadow"
-           onmouseover="this.src=this.dataset.back"
-           onmouseout="this.src=this.dataset.front"
-           data-front="${thirdFront}"
-           data-back="${thirdBack}" />
-      <p class="text-sm text-gray-300">Third Kit<br/>
-        <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
-        <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
-      </p>
-    `;
-    root.querySelector('#kits-grid')?.appendChild(thirdKit);
-  }
-  }
+      const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
+      const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
 
+      const card = document.createElement('div');
+      card.className = `relative min-w-[180px] rounded-lg ${bg} p-1 shadow border border-white/10 flex flex-col items-center justify-between`;
+      if (isUpcoming && !nextMatchMarked) {
+        card.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
+        card.dataset.upcoming = 'true';
+        card.dataset.showNextLabel = 'true';
+        nextMatchMarked = true;
+      }
+
+       const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+      card.innerHTML = `
+        ${card.dataset.showNextLabel === 'true' ? 
+          '<div class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-2 py-0.5 rounded-full font-bold uppercase z-10">Next</div>' 
+          : ''
+        } 
+        <div class="flex gap-2 justify-between">  
+          <div class="absolute ${(match.tournament==='TVC')? '-left-6' : '-left-3'} top-1/2 transform -translate-y-1/2 z-10">
+            <img src="assets/competitions/${match.tournament}.png" alt="${match.tournament}" class="h-12 w-auto shadow-lg rounded-lg" />
+          </div>         
+        <div class="grid grid-cols-[15%_85%] gap-2 w-full rounded pl-2 pr-2">
+          <div class="relative text-gray-200 text-center">
+            <div class="relative z-5 font-semibold">
+              <p class="text-xs text-shadow-lg/30">${months[matchDate.getMonth()-1]}</p>
+              <p class="text-base text-shadow-lg/30">${matchDate.getDate()}</p>
+            </div>
+          </div>
+
+          <div class="relative text-white">
+            <!-- Stadium background image -->
+            <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('assets/stadiums/${match.home ? club.name : match.opponent}.png');"></div>
+            <!-- Overlay (Black) -->
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-1"></div>
+            <!-- Score Details on top of the background and overlay -->
+            <div class="relative z-5 flex items-center justify-center gap-2 h-full">
+              <img src="${match.home ? clubLogo : opponentLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
+              ${hasScore ? scoreHTML : '<span class="text-gray-200 font-semibold text-sm">vs</span>'}
+              <img src="${match.home ? opponentLogo : clubLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+      `;
+
+      strip.appendChild(card);
+    }
+
+    // Scroll to upcoming match
+    setTimeout(() => {
+      const upcomingCard = strip.querySelector('[data-upcoming="true"]');
+      if (upcomingCard) {
+        const offset = upcomingCard.offsetLeft - strip.offsetWidth / 2 + upcomingCard.offsetWidth / 2;
+        strip.scrollTo({ left: offset, behavior: 'smooth' });
+      }
+
+      const leftBtn = document.getElementById('match-left');
+      const rightBtn = document.getElementById('match-right');
+      if (!leftBtn || !rightBtn) return;
+
+      leftBtn.addEventListener('click', () => {
+        strip.scrollBy({ left: -200, behavior: 'smooth' });
+      });
+
+      rightBtn.addEventListener('click', () => {
+        strip.scrollBy({ left: 200, behavior: 'smooth' });
+      });
+    }, 100);
+  }
+  
   if (club.competition_history && root.querySelector('#club-honors')) {
     const honorsEl = root.querySelector('#club-honors');
     for (const [comp, data] of Object.entries(club.competition_history)) {
@@ -137,62 +199,177 @@ function populateData(root, club) {
       `;
       honorsEl.appendChild(trophy);
     }
+  }  
+
+  if (club.club_history && root.querySelector('#club-history')) {
+    root.querySelector('#club-history').innerHTML = club.club_history;
   }
 
-  if (club.supporter_profile && root.querySelector('#supporter-bar')) {
-    const bar = root.querySelector('#supporter-bar');
-    const total = Object.values(club.supporter_profile).reduce((a, b) => a + b, 0);
-    for (const [trait, value] of Object.entries(club.supporter_profile)) {
-      const segment = document.createElement('div');
-      segment.style.width = `${(value / total) * 100}%`;
-      segment.className = 'h-full relative flex items-center justify-center';
-      segment.innerHTML = `<span class="hidden md:block text-[10px] text-white font-semibold">
-        ${trait.charAt(0).toUpperCase() + trait.slice(1)}
-      </span>`;
+  // if (club.kits) {
+  // const home = root.querySelector('#kit-home');
+  // if (home) {
+  //   const front = `assets/kits/${club.kits.home_kit_svg}.svg` || 'https://via.placeholder.com/140';
+  //   const back = `assets/kits/${club.kits.away_kit_svg}.svg` || 'https://via.placeholder.com/140';
+  //   home.src = front;
+  //   home.dataset.front = front;
+  //   home.dataset.back = back;
+  // }
 
-      segment.title = `${trait}: ${value}`;
-      segment.style.backgroundColor = {
-        loyalty: '#16a34a',
-        passion: '#dc2626',
-        patience: '#fbbf24',
-        affluence: '#0ea5e9',
-        temprament: '#7c3aed',
-        expectations: '#f472b6'
-      }[trait] || '#888';
-      bar.appendChild(segment);
+  // const away = root.querySelector('#kit-away');
+  // if (away) {
+  //   const front = `assets/kits/${club.kits.away_kit_svg}.svg`  || 'https://via.placeholder.com/140';
+  //   const back = `assets/kits/${club.kits.home_kit_svg}.svg`  || 'https://via.placeholder.com/140';
+  //   away.src = front;
+  //   away.dataset.front = front;
+  //   away.dataset.back = back;
+  // }
+
+  // if (club.kits.third) {
+  //   const thirdKit = document.createElement('div');
+  //   thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
+  //   const thirdFront = club.kits.third;
+  //   const thirdBack = thirdFront.replace(/\\.svg$/, '_back.png');
+
+  //   thirdKit.innerHTML = `
+  //     <img src="${thirdFront}" alt="Third Kit"
+  //          class="w-2/3 mx-auto object-contain mb-2 rounded shadow"
+  //          onmouseover="this.src=this.dataset.back"
+  //          onmouseout="this.src=this.dataset.front"
+  //          data-front="${thirdFront}"
+  //          data-back="${thirdBack}" />
+  //     <p class="text-sm text-gray-300">Third Kit<br/>
+  //       <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
+  //       <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
+  //     </p>
+  //   `;
+  //   root.querySelector('#kits-grid')?.appendChild(thirdKit);
+  // }
+  // }
+
+  if (club.kits) {
+    // Nested helper function to load and inject SVG content
+    async function loadSvg(containerId, svgPath) {
+      const container = root.querySelector(`#${containerId}`);
+      if (!container) return;
+
+      try {
+        const response = await fetch(svgPath);
+        if (!response.ok) throw new Error(`Failed to load SVG from ${svgPath}`);
+        const svgText = await response.text();
+        container.innerHTML = svgText;
+      } catch (error) {
+        console.error(`Error loading SVG for container ${containerId}:`, error);
+      }
     }
-    
-  // 🎉 Fan Clubs
-  if (Array.isArray(club.fan_clubs)) {
-    const list = root.querySelector('#fan-clubs');
-    list.innerHTML = ''; // clear defaults
-    for (const fanClub of club.fan_clubs) {
-      const li = document.createElement('li');
-      li.textContent = fanClub;
-      list.appendChild(li);
+
+    // Nested helper function to set CSS variables
+    function setKitColors(containerId, colors) {
+      const container = root.querySelector(`#${containerId}`);
+      if (!container) return;
+      container.style.setProperty('--kit-primary-color', `rgb(${colors[0][0]}, ${colors[0][1]}, ${colors[0][2]})`);
+      container.style.setProperty('--kit-secondary-color', `rgb(${colors[1][0]}, ${colors[1][1]}, ${colors[1][2]})`);
+      container.style.setProperty('--kit-accent-color', `rgb(${colors[2][0]}, ${colors[2][1]}, ${colors[2][2]})`);
+      container.style.setProperty('--kit-number-color', `rgb(${colors[3][0]}, ${colors[3][1]}, ${colors[3][2]})`);
     }
-  }
 
-  // 💬 Fan Quotes
-  if (Array.isArray(club.supporter_quotes)) {
-    const quoteWrap = root.querySelector('#fan-quotes');
-    quoteWrap.innerHTML = ''; // clear defaults
-    for (const q of club.supporter_quotes) {
-      const block = document.createElement('div');
-      block.className =
-        'bg-gradient-to-br from-amber-500/10 to-blue-800/10 border border-blue-700 p-4 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 backdrop-blur-sm';
+    // Function to handle a single kit display
+    async function displayKit(kitType) {
+      const kitData = club.kits;
+      const colors = kitData[kitType];
+      const svgNumber = kitData[`${kitType}_kit_svg`];
+      const frontContainerId = `kit-${kitType}-front`;
+      const backContainerId = `kit-${kitType}-back`;
 
-      block.innerHTML = `
-        <p class="italic">“${q.text}”</p>
-        <p class="text-xs text-right text-amber-400">— ${q.author}</p>
+      // Load and style the front of the kit
+      const frontSvgPath = `assets/kits/${svgNumber}.svg`;
+      await loadSvg(frontContainerId, frontSvgPath);
+      setKitColors(frontContainerId, colors);
+
+      // Handle the back of the kit
+      const backType = kitData[`${kitType}_back`];
+
+      if (backType === 'same_as_front') {
+        const frontSvg = root.querySelector(`#${frontContainerId} svg`);
+        if (frontSvg) {
+          const backSvg = frontSvg.cloneNode(true);
+          const backContainer = root.querySelector(`#${backContainerId}`);
+          if (backContainer) {
+            backContainer.innerHTML = '';
+            backContainer.appendChild(backSvg);
+            setKitColors(backContainerId, colors);
+          }
+        }
+      } else {
+        const backSvgPath = `assets/kits/backs/${backType}.svg`;
+        await loadSvg(backContainerId, backSvgPath);
+        setKitColors(backContainerId, colors);
+      }
+
+      // Add mouseover/mouseout functionality
+      const mainContainer = root.querySelector(`#kit-${kitType}-container`);
+      const frontContainer = root.querySelector(`#${frontContainerId}`);
+      const backContainer = root.querySelector(`#${backContainerId}`);
+
+      if (mainContainer && frontContainer && backContainer) {
+        mainContainer.addEventListener('mouseover', () => {
+          frontContainer.classList.add('hidden');
+          backContainer.classList.remove('hidden');
+        });
+        mainContainer.addEventListener('mouseout', () => {
+          backContainer.classList.add('hidden');
+          frontContainer.classList.remove('hidden');
+        });
+      }
+    }
+
+    // Call the display function for each kit type
+    await displayKit('home');
+    await displayKit('away');
+
+    if (club.kits.third) {
+      const thirdKit = document.createElement('div');
+      thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
+      thirdKit.innerHTML = `
+        <div id="third-kit-container" class="w-2/3 mx-auto object-contain mb-2 rounded shadow">
+          <div id="third-kit-front"></div>
+        </div>
+        <p class="text-sm text-gray-300">Third Kit<br/>
+          <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
+          <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
+        </p>
       `;
-      quoteWrap.appendChild(block);
+      root.querySelector('#kits-grid')?.appendChild(thirdKit);
+      await loadSvg('third-kit-front', club.kits.third);
+      // Optional: set third kit colors if you have the data
+      // setKitColors('third-kit-front', club.kits.third_colors);
     }
   }
-  }
 
-  if (club.club_slogan && root.querySelector('#supporter-chant')) {
-    root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
+  if (club.players_alumni && root.querySelector('#club-legends')) {
+    for (const type of ['legends', 'icons']) {
+      const wrap = root.querySelector(`#club-${type}`);
+      for (const player of club.players_alumni[type] || []) {
+        const img = document.createElement('img');
+        img.src = `assets/players/${encodeURIComponent(player["name"])}.png`;
+        img.alt = `${player["name"]} - ${player["role"]}`;
+        img.title = `${player["name"]} - ${player["role"]}`;
+        img.className = 'h-20 w-20 rounded-full object-cover bg-white/10';
+        img.onerror = () => {
+          // Fetch a random user from RandomUser.me
+          fetch('https://randomuser.me/api/?gender=male')
+            .then(response => response.json())
+            .then(data => {
+              // Get the user's picture (default is large, you can adjust the size)
+              img.src = data.results[0].picture.large;
+            })
+            .catch(() => {
+              // In case the API request fails, set a fallback image
+              img.src = 'https://randomuser.me/api/portraits/lego/1.jpg'; // Lego placeholder
+            });
+        };        
+        wrap.appendChild(img);
+      }
+    }
   }
 
   if (club.rivals && root.querySelector('#rival-strip')) {
@@ -276,100 +453,60 @@ ${
   }, 0);
   }
 
-  if (club.club_history && root.querySelector('#club-history')) {
-    root.querySelector('#club-history').textContent = club.club_history;
-  }
+  if (club.supporter_profile && root.querySelector('#supporter-bar')) {
+    const bar = root.querySelector('#supporter-bar');
+    const total = Object.values(club.supporter_profile).reduce((a, b) => a + b, 0);
+    for (const [trait, value] of Object.entries(club.supporter_profile)) {
+      const segment = document.createElement('div');
+      segment.style.width = `${(value / total) * 100}%`;
+      segment.className = 'h-full relative flex items-center justify-center';
+      segment.innerHTML = `<span class="hidden md:block text-[10px] text-white font-semibold">
+        ${trait.charAt(0).toUpperCase() + trait.slice(1)}
+      </span>`;
 
-  if (club.players_alumni && root.querySelector('#club-legends')) {
-    for (const type of ['legends', 'icons']) {
-      const wrap = root.querySelector(`#club-${type}`);
-      for (const name of club.players_alumni[type] || []) {
-        const img = document.createElement('img');
-        img.src = `assets/players/${encodeURIComponent(name)}.png`;
-        img.alt = name;
-        img.title = name;
-        img.className = 'h-20 w-20 rounded-full object-cover bg-white/10';
-        // img.onerror = () => (img.src = 'https://via.placeholder.com/40');
-        wrap.appendChild(img);
-      }
+      segment.title = `${trait}: ${value}`;
+      segment.style.backgroundColor = {
+        loyalty: '#16a34a',
+        passion: '#dc2626',
+        patience: '#fbbf24',
+        affluence: '#0ea5e9',
+        temprament: '#7c3aed',
+        expectations: '#f472b6'
+      }[trait] || '#888';
+      bar.appendChild(segment);
+    }
+    
+  // 🎉 Fan Clubs
+  if (Array.isArray(club.fan_clubs)) {
+    const list = root.querySelector('#fan-clubs');
+    list.innerHTML = ''; // clear defaults
+    for (const fanClub of club.fan_clubs) {
+      const li = document.createElement('li');
+      li.textContent = fanClub;
+      list.appendChild(li);
     }
   }
 
-  if (club.schedule && root.querySelector('#match-strip')) {
-    const strip = root.querySelector('#match-strip');
-    const today = new Date();
+  // 💬 Fan Quotes
+  if (Array.isArray(club.supporter_quotes)) {
+    const quoteWrap = root.querySelector('#fan-quotes');
+    quoteWrap.innerHTML = ''; // clear defaults
+    for (const q of club.supporter_quotes) {
+      const block = document.createElement('div');
+      block.className =
+        'bg-gradient-to-br from-amber-500/10 to-blue-800/10 border border-blue-700 p-4 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 backdrop-blur-sm';
 
-    let nextMatchMarked = false;
-    for (const match of club.schedule) {
-      const matchDate = new Date(match.date);
-      const isPast = matchDate < today;
-      const isUpcoming = !match.score && !isPast;
-      const hasScore = !!match.score;
-
-      // Background color based on result
-      let bg = 'bg-white/10';
-      let scoreHTML = '';
-      if (hasScore) {
-        let homeScore = null, awayScore = null;
-        if (typeof match.score === 'string' && match.score.includes('-')) {
-          [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
-        }
-        const clubIsHome = match.home;
-        const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
-        const draw = homeScore === awayScore;
-        bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
-        scoreHTML = `<div class="text-center text-lg font-bold text-white mt-1">${homeScore} - ${awayScore}</div>`;
-      }
-
-      const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
-      const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
-
-      const card = document.createElement('div');
-      card.className = `relative min-w-[180px] rounded-lg ${bg} p-2 shadow border border-white/10 flex flex-col items-center justify-between`;
-      if (isUpcoming && !nextMatchMarked) {
-        card.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
-        card.dataset.upcoming = 'true';
-        card.dataset.showNextLabel = 'true';
-        nextMatchMarked = true;
-      }
-
-
-      card.innerHTML = `
-        ${card.dataset.showNextLabel === 'true' ? '<div class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Next</div>' : ''}
-        <div class="flex items-baseline justify-between gap-2">
-          <div class="text-xs text-gray-300 font-medium">${match.date}</div>
-          <div class="text-xs text-gray-300 truncate text-center">🏟 ${match.venue}</div>
-        </div>
-        <div class="flex items-center justify-center gap-2">
-          <img src="${match.home ? clubLogo : opponentLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-          ${hasScore ? scoreHTML : '<span class="text-gray-400 font-semibold text-sm">vs</span>'}
-          <img src="${match.home ? opponentLogo : clubLogo}" class="h-6 w-6 object-contain bg-white/10 rounded" />
-        </div>
+      block.innerHTML = `
+        <p class="italic">“${q.text}”</p>
+        <p class="text-xs text-right text-amber-400">— ${q.author}</p>
       `;
-
-      strip.appendChild(card);
+      quoteWrap.appendChild(block);
     }
+  }
+  }
 
-    // Scroll to upcoming match
-    setTimeout(() => {
-      const upcomingCard = strip.querySelector('[data-upcoming="true"]');
-      if (upcomingCard) {
-        const offset = upcomingCard.offsetLeft - strip.offsetWidth / 2 + upcomingCard.offsetWidth / 2;
-        strip.scrollTo({ left: offset, behavior: 'smooth' });
-      }
-
-      const leftBtn = document.getElementById('match-left');
-      const rightBtn = document.getElementById('match-right');
-      if (!leftBtn || !rightBtn) return;
-
-      leftBtn.addEventListener('click', () => {
-        strip.scrollBy({ left: -200, behavior: 'smooth' });
-      });
-
-      rightBtn.addEventListener('click', () => {
-        strip.scrollBy({ left: 200, behavior: 'smooth' });
-      });
-    }, 100);
+  if (club.club_slogan && root.querySelector('#supporter-chant')) {
+    root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
   }
 
 }
