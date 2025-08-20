@@ -5103,22 +5103,6 @@ export const regionData = {
                 score: null,
                 tournament: "VSL"
               },
-              {
-                date: "2025-09-11",
-                opponent: "Zarnov Union",
-                home: false,
-                venue: "Red Foundry Park",
-                score: null,
-                tournament: "VSL"
-              },
-              {
-                date: "2025-09-14",
-                opponent: "Kresna Dynamo",
-                home: false,
-                venue: "The Dynamo Spire",
-                score: null,
-                tournament: "VSL"
-              },
             ],
             fan_clubs: [
               "The Iron Eagles Union",
@@ -5142,8 +5126,6 @@ export const regionData = {
                   "Valdren pride will still remain,",
                   "With every sprint, with every cheer,",
                   "We’ll make our glory loud and clear,",
-                  "Stand together, black and gold,",
-                  "Our story’s young, our hearts are old,",
                   "Valdren Atletika, forever true,",
                   "The pride of Valdren lives in you!"
                 ]

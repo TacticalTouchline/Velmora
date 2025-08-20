@@ -87,7 +87,8 @@ async function populateData(root, club) {
   root.querySelector('#club-founded') && (root.querySelector('#club-founded').textContent = club.founded);
   root.querySelector('#club-hashtag') && (root.querySelector('#club-hashtag').textContent = club.hashtag);
 
-  
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
   if (club.schedule && root.querySelector('#match-strip')) {
     const strip = root.querySelector('#match-strip');
     const today = new Date(2025, 7, 22);
@@ -126,7 +127,6 @@ async function populateData(root, club) {
         nextMatchMarked = true;
       }
 
-       const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
       card.innerHTML = `
         ${card.dataset.showNextLabel === 'true' ? 
           '<div class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-2 py-0.5 rounded-full font-bold uppercase z-10">Next</div>' 
@@ -137,7 +137,7 @@ async function populateData(root, club) {
             <img src="assets/competitions/${match.tournament}.png" alt="${match.tournament}" class="h-12 w-auto shadow-lg rounded-lg" />
           </div>         
         <div class="grid grid-cols-[15%_85%] gap-2 w-full rounded pl-2 pr-2">
-          <div class="relative text-gray-200 text-center">
+          <div class="relative text-gray-200 text-center -left-1">
             <div class="relative z-5 font-semibold">
               <p class="text-xs text-shadow-lg/30">${months[matchDate.getMonth()-1]}</p>
               <p class="text-base text-shadow-lg/30">${matchDate.getDate()}</p>
@@ -350,7 +350,7 @@ async function populateData(root, club) {
       const wrap = root.querySelector(`#club-${type}`);
       for (const player of club.players_alumni[type] || []) {
         const img = document.createElement('img');
-        img.src = `assets/players/${encodeURIComponent(player["name"])}.png`;
+        img.src = `assets/players/${player["name"]}.png`;
         img.alt = `${player["name"]} - ${player["role"]}`;
         img.title = `${player["name"]} - ${player["role"]}`;
         img.className = 'h-20 w-20 rounded-full object-cover bg-white/10';
@@ -383,10 +383,10 @@ async function populateData(root, club) {
 
   for (const rival of club.rivals) {
     const derby = derbies[rival.club];
-    const logo = `assets/logos/clubs/${encodeURIComponent(rival.club)}.png`;
+    const logo = `assets/logos/clubs/${rival.club}.png`;
 
     const card = document.createElement('div');
-    card.className = `min-w-[180px] bg-white/10 p-4 rounded-lg border border-white/10 shadow text-center flex flex-col items-center justify-between gap-2`;
+    card.className = `min-w-[224px] bg-white/10 p-4 rounded-lg border border-white/10 shadow text-center flex flex-col items-center justify-between gap-2`;
 
     card.innerHTML = `
       <img src="${logo}" alt="${rival.club}" class="h-12 w-12 object-contain bg-white/10 rounded-full" />
@@ -397,42 +397,73 @@ async function populateData(root, club) {
       <div class="text-xs font-medium ${rival.level > 75 ? 'text-red-400' : rival.level > 50 ? 'text-orange-300' : 'text-blue-300'}">
         Rivalry Level: ${rival.level}
       </div>
-${
-  derby
-    ? `<div class="bg-blue-800/50 text-xs text-amber-300 px-2 py-1 rounded mt-1">
-         Derby: <strong>${derby.name}</strong>
-       </div>`
-    : ''
-}
-${
-  (() => {
-    const today = new Date();
-    const nextMatch = club.schedule?.find(
-      m => new Date(m.date) >= today && m.opponent === rival.club
-    );
-    if (!nextMatch) return '';
+      ${
+        derby
+          ? `<div class="bg-blue-800/50 text-xs text-amber-300 px-2 py-1 rounded mt-1">
+              Derby: <strong>${derby.name}</strong>
+            </div>`
+          : ''
+      }
+      ${
+        (() => {
+          const today = new Date();
+          const nextMatch = club.schedule?.find(m => new Date(m.date) >= today && m.opponent === rival.club);
+          if (!nextMatch) {
+            return `
+            <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
+            <div class="flex justify-center items-center bg-white/10 text-xl text-gray-200 rounded px-2 py-1 min-h-[72px] w-[80%]">
+              <p>- </p>
+            </div>
+            `;
+          }
+          const matchDate = new Date(nextMatch.date);
+          const isHome = nextMatch.home;
+          const homeLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? club.name : nextMatch.opponent)}.png`;
+          const awayLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? nextMatch.opponent : club.name)}.png`;
 
-    const isHome = nextMatch.home;
-    const homeLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? club.name : nextMatch.opponent)}.png`;
-    const awayLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? nextMatch.opponent : club.name)}.png`;
+          return `
+            <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
 
-    return `
-      <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
-      <div class="bg-white/10 text-xs text-gray-200 rounded px-2 py-1">
-        <div class="font-semibold mb-1 text-center">${nextMatch.date}</div>
-        <div class="flex justify-center items-center gap-2">
-          <img src="${homeLogo}" class="h-5 w-5 rounded object-contain bg-white/10" />
-          <span class="font-medium text-white text-sm">vs</span>
-          <img src="${awayLogo}" class="h-5 w-5 rounded object-contain bg-white/10" />
-        </div>
-        <div class="text-[10px] text-center mt-1">🏟 ${nextMatch.venue}</div>
-      </div>
-    `;
-  })()
-}
+            <div class="bg-white/10 text-xs text-gray-200 rounded px-2 py-1 relative"> 
+              <!-- Badge/logo -->
+              <div class="absolute ${(nextMatch.tournament==='TVC')? '-left-6' : '-left-3'} top-1/2 transform -translate-y-1/2 z-10">
+                <img src="assets/competitions/${nextMatch.tournament}.png" alt="${nextMatch.tournament}" class="h-12 w-auto shadow-lg rounded-lg" />
+              </div>
 
+              <!-- Group wrapper for hover behavior -->
+              <div class="group relative">
+                <div class="default-view">
+                  <div class="grid grid-cols-[15%_10%_75%] gap-2 w-full rounded pl-2 pr-2">
+                    <div class="relative text-gray-200 text-center">
+                      <div class="relative z-5 font-semibold">
+                        <p class="text-xs text-shadow-lg/30">${months[matchDate.getMonth()-1]}</p>
+                        <p class="text-base text-shadow-lg/30">${matchDate.getDate()}</p>
+                      </div>
+                    </div>
+                    <div class="w-px bg-gray-300 h-full opacity-30"></div>
+                    <div class="relative text-white -left-3">
+                      <div class="relative z-5 flex items-center justify-center gap-2 h-full">
+                        <img src="${nextMatch.home ? homeLogo : awayLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
+                        <span class="text-gray-200 font-semibold text-sm">vs</span>
+                        <img src="${nextMatch.home ? awayLogo : homeLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="opacity-30 mt-1 mb-1"/>
+                  <div class="text-xs text-center mt-1">🏟 ${nextMatch.venue}</div>
+                </div>
 
-    `;
+                <!-- Hover content: hidden by default, shown on group hover -->
+                <div class="z-5 gap-2 hidden group-hover:flex absolute inset-0 items-center justify-center bg-blue-700 hover:bg-blue-600 text-white text-md font-bold border border-blue-700 rounded transition duration-300 cursor-pointer">
+                  Book Tickets <span class="text-lg">➚</span>
+                </div>
+              </div>
+            </div>
+            `;
+          })
+        ()
+      }
+          `;
 
     strip.appendChild(card);
   }
@@ -476,16 +507,50 @@ ${
       bar.appendChild(segment);
     }
     
-  // 🎉 Fan Clubs
-  if (Array.isArray(club.fan_clubs)) {
-    const list = root.querySelector('#fan-clubs');
-    list.innerHTML = ''; // clear defaults
-    for (const fanClub of club.fan_clubs) {
-      const li = document.createElement('li');
-      li.textContent = fanClub;
-      list.appendChild(li);
-    }
+// 🎉 Fan Clubs
+if (Array.isArray(club.fan_clubs)) {
+  const list = root.querySelector('#fan-clubs');
+  list.innerHTML = ''; // Clear existing content
+
+  for (const fanClub of club.fan_clubs) {
+    // Create the outer card container
+    const card = document.createElement('div');
+    card.className = 'text-sm shadow-md rounded-lg p-2 bg-white/10 border border-white/10 shadow divide-y divide-gray-300 divide-opacity-30';
+
+    const banner = document.createElement('img');
+    banner.src = `assets/fanClubs/${fanClub}.png` || 'https://via.placeholder.com/140';
+    banner.className = "h-12 w-auto rounded-full object-cover bg-white/10 mb-4"
+
+    // Fan club name
+    const name = document.createElement('p');
+    name.className = 'text-md text-center font-bold pt-2 mb-2';
+    name.textContent = fanClub || 'Unnamed Fan Club';
+
+    const iconRow = document.createElement('div');
+    iconRow.className = 'flex items-center justify-center pt-2 text-md divide-x divide-gray-300 divide-opacity-30';
+
+    // Helper function to wrap each icon in a span with padding
+    const createIcon = (emoji) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'w-full text-center'; // horizontal padding for space around dividers
+      wrapper.textContent = emoji;
+      return wrapper;
+    };
+
+    iconRow.appendChild(createIcon('📍'));
+    iconRow.appendChild(createIcon('📅'));
+    iconRow.appendChild(createIcon('📰'));
+
+    // Append elements to card
+    card.appendChild(banner);
+    card.appendChild(name);
+    card.appendChild(iconRow);
+
+    // Append card to the list container
+    list.appendChild(card);
   }
+}
+
 
   // 💬 Fan Quotes
   if (Array.isArray(club.supporter_quotes)) {
@@ -508,7 +573,6 @@ ${
   if (club.club_slogan && root.querySelector('#supporter-chant')) {
     root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
   }
-
 }
 
 const params = new URLSearchParams(window.location.search);
