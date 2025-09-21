@@ -231,7 +231,7 @@ async function populateData(root, club) {
 
     contentWrapper.innerHTML = visibleContent;
     toggleBtn.textContent = 'Read More';
-    toggleBtn.className = 'text-blue-400 underline text-sm mt-2 block';
+    toggleBtn.className = 'text-blue-600 font-semibold text-md mt-2 block';
 
     let expanded = false;
 
@@ -496,7 +496,7 @@ async function populateData(root, club) {
                 </div>
 
                 <!-- Hover content: hidden by default, shown on group hover -->
-                <div class="z-5 gap-2 hidden group-hover:flex absolute inset-0 items-center justify-center bg-blue-700 hover:bg-blue-600 text-white text-md font-bold border border-blue-700 rounded transition duration-300 cursor-pointer">
+                <div class="z-5 gap-2 hidden group-hover:flex absolute inset-0 items-center justify-center bg-blue-700 bg-opacity-75 hover:bg-blue-600 hover:bg-opacity-75 text-white text-md font-bold border border-blue-700 rounded transition duration-300 cursor-pointer">
                   Book Tickets <span class="text-lg">➚</span>
                 </div>
               </div>

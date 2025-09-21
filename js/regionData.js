@@ -2280,14 +2280,49 @@ export const regionData = {
             colors: ["rgb(34,67,43) ", "rgb(210, 175, 73)", "rgb(40,40,40)"],
             stadium: "Lokomotiv Railstadion",
             coord: [230, 155],
-            club_history:
-              "Sevrin Lokomotiv is one of Velmora’s most historic football institutions, known for its strong ties to the railway industry and state infrastructure. Founded by transport workers, it became a symbol of national modernization during the mid-20th century.\nIn its heyday, Lokomotiv dominated the league thanks to state backing and a ruthlessly organized style of play. Though that political era ended, the club still embodies that identity: rigid systems, cold weather, steely mentality.\nThe club’s stadium, Lokomotiv Railstadion, sits at high altitude and often gets snow in spring matches — it's a dreaded away trip for southern clubs.\nToday, Lokomotiv remains financially stable, if unspectacular. They don’t chase headlines, but they consistently develop youth, grind out results, and finish strong.",
+            club_history: `
+              <h3 class="text-base font-semibold text-white mb-2">
+                The Founding and Industrial Ascent <span class="text-base font-normal text-white/80">(1912–1940s)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                Sevrin Lokomotiv was born from the whistle and hiss of a steam locomotive. Founded in <strong class="text-yellow-300">1912</strong> by a collective of rail workers and engineers, the club was not merely a sports team but a symbol of the nation’s burgeoning railway network. It embodied the ideals of efficiency, collective effort, and steadfast progress. Early on, the club's identity was built on the disciplined, unyielding mentality of its founders—men who knew that every cog had to turn in unison for the machine to move forward.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                This period was defined by the team's rise through the Velmoran football ranks, mirroring the rapid expansion of the railway system itself. They built a reputation as a difficult team to break down, their style of play reflecting the cold, calculated precision of the railways they served.
+              </p>
+
+              <h3 class="text-base font-semibold text-white mb-2">
+                The State-Backed Dynasty <span class="text-base font-normal text-white/80">(1950s–1980s)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                The mid-20th century marked Sevrin Lokomotiv's true ascent to power. With direct backing from the state and its central railway authority, the club became a juggernaut, a symbol of national modernization and industrial strength. Their stadium, the <strong class="text-yellow-300">Lokomotiv Railstadion</strong>, was built at a high altitude, becoming an imposing fortress that opponents dreaded visiting, especially during the harsh Velmoran winters.
+              </p>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                This era was dominated by a ruthlessly organized and systematic approach to football. The team played with a steely mentality, their discipline and tactical rigidity overwhelming more creative opponents. The results were spectacular, with the club securing multiple titles: <strong class="text-yellow-300">Velmora Super League</strong> triumphs in <strong class="text-yellow-300">1950, 1957, 1970, and 1983</strong>. They also clinched a remarkable run of <strong class="text-yellow-300">Velmoran Cup</strong> victories, lifting the trophy in <strong class="text-yellow-300">1951, 1952, 1958, 1972, 1974, and 1984</strong>, solidifying their status as a dominant force in Velmoran football.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                For nearly four decades, Sevrin Lokomotiv wasn't just a team; it was a testament to the power of a well-oiled machine, its players executing the game plan with the precision of a clockwork mechanism.
+              </p>
+
+              <h3 class="text-base font-semibold text-white mb-2">
+                The Post-State Era and Modern Identity <span class="text-base font-normal text-white/80">(1990s–Present)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                The late 20th century brought political and social changes that ended the club's state-sponsored dominance. However, Sevrin Lokomotiv proved to be more than just a political project. They adapted by leaning into their core identity: stability, discipline, and a focus on long-term development. The early 1990s saw a final flourish of glory, with a rare <strong class="text-yellow-300">league and cup double in 1992</strong>, followed by another <strong class="text-yellow-300">Velmoran Cup in 1993</strong>.
+              </p>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                While the trophy cabinet hasn't been as full since, the club has remained a consistent presence in the top tier. They may not chase headlines or make blockbuster signings, but their financial stability and commitment to youth development—producing a steady stream of talent for the Velmoran national team—have made them a model of consistency. The club’s philosophy remains unchanged: they grind out results, finish strong, and remain true to their blue-collar roots.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                Today, Sevrin Lokomotiv stands as a financially stable, unglamorous but utterly reliable institution—a cold, calculated, and professional unit that continues to be a difficult opponent, especially in the high-altitude chill of the Railstadion.
+              </p>`,
+              // "Sevrin Lokomotiv is one of Velmora’s most historic football institutions, known for its strong ties to the railway industry and state infrastructure. Founded by transport workers, it became a symbol of national modernization during the mid-20th century.\nIn its heyday, Lokomotiv dominated the league thanks to state backing and a ruthlessly organized style of play. Though that political era ended, the club still embodies that identity: rigid systems, cold weather, steely mentality.\nThe club’s stadium, Lokomotiv Railstadion, sits at high altitude and often gets snow in spring matches — it's a dreaded away trip for southern clubs.\nToday, Lokomotiv remains financially stable, if unspectacular. They don’t chase headlines, but they consistently develop youth, grind out results, and finish strong.",
             club_values: ["“Steel minds, snow legs.”"],
             club_slogan:
               "“Cold Winds Blow, Rails Run True – Lokomotiv Pulls Right Through!”",
             competition_history: {
               VSL: {
-                winnerIn: [],
+                winnerIn: [1950, 1957, 1970, 1983, 1992],
               },
               VNN: {
                 winnerIn: [],
@@ -2305,7 +2340,7 @@ export const regionData = {
                 winnerIn: [],
               },
               TVC: {
-                winnerIn: [],
+                winnerIn: [1951, 1952, 1958, 1972, 1974, 1984, 1992, 1993],
               },
             },
             kits: {
@@ -4958,21 +4993,81 @@ export const regionData = {
             stadium: "Titan Forge Arena",
             coord: [200, 210],
             club_history:`
-                <h3 class="text-base font-semibold text-white mb-2">The Founding and Early Years <span class="text-base font-normal text-white/80">(1919-1930s)</span></h3>
-                <p class="mb-4 text-white/90 leading-relaxed">Valdren Atletika was born from the soot and steam of the Valdren Ironworks, a colossal industrial force that forged not just steel, but the very identity of the Velmoran capital. What began as a worker's recreational club quickly became a symbol of industrial might and capital dominance, bankrolled by the Ironworks' formidable owner, <strong class="text-lime-400">Lord Kaelan Valdren</strong>. He saw the team as an extension of his business empire—a disciplined, powerful force that would crush all opposition.</p>
-                <p class="mb-6 text-white/90 leading-relaxed">The team's early style of play mirrored their origin: unyielding, rugged, and built on a foundation of raw strength and tactical discipline. They were a team of hard-nosed professionals who played every match as if it were a battle for the city's soul.</p>
+                <h3 class="text-base font-semibold text-white mb-2">
+                  The Founding and Early Years <span class="text-base font-normal text-white/80">(1903–1930s)</span>
+                </h3>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  Valdren Atletika was born from the soot and steam of the Valdren Ironworks, a colossal industrial force that forged not just steel, but the very identity of the Velmoran capital. What began as a worker's recreational club quickly became a symbol of industrial might and capital dominance, bankrolled by the Ironworks' formidable owner, <strong class="text-lime-400">Lord Kaelan Valdren</strong>. He saw the team as an extension of his business empire—a disciplined, powerful force that would crush all opposition.
+                </p>
+                <p class="mb-6 text-white/90 leading-relaxed">
+                  The team’s early style of play mirrored their origin: unyielding, rugged, and built on a foundation of raw strength and tactical discipline. They were a team of hard-nosed professionals who played every match as if it were a battle for the city’s soul.
+                </p>
+                <p class="mb-6 text-white/90 leading-relaxed">
+                  The results followed. Valdren Atletika captured its first major trophies in this era: <strong class="text-lime-400">a league and cup double in 1924</strong>, and another <strong class="text-lime-400">Velmoran Cup win in 1923</strong>. They continued to make their mark with <strong class="text-lime-400">back-to-back Cup triumphs in 1933 and 1934</strong>, and clinched another league title in <strong class="text-lime-400">1935</strong>, firmly establishing themselves as a force in Velmoran football.
+                </p>
 
-                <h3 class="text-base font-semibold text-white mb-2">The Golden Era: Forging a Dynasty <span class="text-base font-normal text-white/80">(1930s-1960s)</span></h3>
-                <p class="mb-4 text-white/90 leading-relaxed">This was the era when Valdren Atletika ascended from regional powerhouse to national institution. Under the visionary management of <strong class="text-lime-400">"The Architect" Lorian Steelborn</strong>, the club refined its rugged style into a more elegant, yet still physically dominant, brand of football. This period saw them capture an incredible <strong class="text-lime-400">five national titles</strong> and <strong class="text-lime-400">three Velmoran Cups</strong>.</p>
-                <p class="mb-6 text-white/90 leading-relaxed">The team's heart was in its midfield, orchestrated by the legendary playmaker, <strong class="text-lime-400">Marius "The Maestro" Thorne</strong>, and anchored by the granite-tough defender, <strong class="text-lime-400">Garrick Stonehand</strong>. Their most iconic victory came in the 1952 championship final, a 2-1 win over rivals Zarnov Union in a match known as "The Strike of '52," where Valdren scored the winning goal in the final minute to seal the title and cement their dynasty.</p>
+                <h3 class="text-base font-semibold text-white mb-2">
+                  The Golden Era: Forging a Dynasty <span class="text-base font-normal text-white/80">(1940s–1960s)</span>
+                </h3>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  This was the era when Valdren Atletika ascended from regional powerhouse to national institution. Under the visionary management of <strong class="text-lime-400">"The Architect" Lorian Steelborn</strong>, the club refined its rugged style into a more elegant, yet still physically dominant, brand of football.
+                </p>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  Between <strong class="text-lime-400">1944 and 1969</strong>, the club collected an incredible haul of <strong class="text-lime-400">7 league titles</strong> (1944, 1946, 1961, 1963, 1967, 1968, 1969) and <strong class="text-lime-400">7 Velmoran Cups</strong> (1944, 1945, 1947, 1959, 1962, 1963, 1965).
+                </p>
+                <p class="mb-6 text-white/90 leading-relaxed">
+                  The team’s heart was in its midfield, orchestrated by the legendary playmaker, <strong class="text-lime-400">Marius "The Maestro" Thorne</strong>, and anchored by the granite-tough defender, <strong class="text-lime-400">Garrick Stonehand</strong>. Their most iconic victory came in the <strong class="text-lime-400">1959 Velmoran Cup final</strong>, a 2–1 win over rivals Zarnov Union in a match known as <em>"The Strike of '59"</em>, where Valdren scored the winning goal in the final minute to seal the title and cement their dynasty.
+                </p>
 
-                <h3 class="text-base font-semibold text-white mb-2">The Turn of the Century and The Era of Modernization <span class="text-base font-normal text-white/80">(1990s-2010s)</span></h3>
-                <p class="mb-4 text-white/90 leading-relaxed">While Valdren never truly fell from grace, the late 20th century saw them struggle to maintain their iron grip on the league. The club's traditionalist approach, once its strength, began to look outdated. A series of near-misses and disappointing cup exits led to a decade of discontent among the fiercely loyal fanbase.</p>
-                <p class="mb-6 text-white/90 leading-relaxed">The club's reawakening came in the early 2000s, spearheaded by the new CEO, <strong class="text-lime-400">Elara Valdren</strong>, a descendant of the founder. She initiated a controversial, but ultimately successful, modernization effort. The club embraced cutting-edge analytics, a global scouting network, and aggressive marketing to expand its brand. This period also saw the club's youth academy blossom, producing stars like the Velmoran national team captain, <strong class="text-lime-400">Lukas Vorn</strong>. This shift balanced the club's proud traditions with a new, ambitious outlook, ensuring their place at the top of Velmoran football.</p>
+                <h3 class="text-base font-semibold text-white mb-2">
+                  The Iron Grip <span class="text-base font-normal text-white/80">(1970s–1980s)</span>
+                </h3>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  Far from slowing down, Valdren continued to dominate into the modern era. With a fresh generation of stars and an expanding fanbase, the club lifted <strong class="text-lime-400">4 more league titles</strong> (1973, 1974, 1977, 1989) and <strong class="text-lime-400">5 more Velmoran Cups</strong> (1966, 1968, 1970, 1975, 1978).
+                </p>
+                <p class="mb-6 text-white/90 leading-relaxed">
+                  This era was defined by consistency, physical dominance, and a culture of winning. Though lacking the same romance as the Steelborn years, the team’s ruthlessness was unmatched.
+                </p>
 
-                <h3 class="text-base font-semibold text-white mb-2">Today: Balancing History and Ambition</h3>
-                <p class="text-white/90 leading-relaxed">Valdren Atletika is now a modern-day powerhouse, a constant presence in the fight for the national title and a symbol of Velmora's footballing strength on the global stage. The pressure to win is immense, a weight carried not just by the players and managers but by the entire organization. The fans, who see the club as the very soul of Velmoran football, demand nothing less than excellence, a legacy forged in the heat of the ironworks and tempered by over a century of ambition.</p>
-              `,
+                <h3 class="text-base font-semibold text-white mb-2">
+                  The Turn of the Century and The Era of Modernization <span class="text-base font-normal text-white/80">(1990s–2010s)</span>
+                </h3>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  While Valdren never truly fell from grace, the late 20th century saw them grapple with evolving styles of play. The 1990s began with frustration but soon yielded success, with <strong class="text-lime-400">Cup and League triumphs in 1994 and 1995</strong>, followed by another Cup in 1996 and a league title in 1997.
+                </p>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  The true reawakening came in the early 2000s, spearheaded by the new CEO, <strong class="text-lime-400">Elara Valdren</strong>, a descendant of the founder. She initiated a controversial but ultimately successful modernization effort. The club embraced analytics, international scouting, and aggressive marketing. The youth academy flourished, producing stars like national team captain <strong class="text-lime-400">Lukas Vorn</strong>.
+                </p>
+                <p class="mb-6 text-white/90 leading-relaxed">
+                  Their resurgence was crowned with <strong class="text-lime-400">5 league titles</strong> (2006, 2010, 2013, 2015, 2016) and <strong class="text-lime-400">7 Velmoran Cups</strong> (2005, 2006, 2008, 2012, 2014, 2016, 2017).
+                </p>
+
+                <h3 class="text-base font-semibold text-white mb-2">
+                  Today: Balancing History and Ambition <span class="text-base font-normal text-white/80">(2020s–)</span>
+                </h3>
+                <p class="mb-4 text-white/90 leading-relaxed">
+                  Valdren Atletika now stands as a modern-day powerhouse—a constant contender in both the <strong class="text-lime-400">Velmoran Super League</strong> and the <strong class="text-lime-400">Velmoran Cup</strong>. Recent seasons brought renewed glory with <strong class="text-lime-400">league titles in 2022 and 2023</strong>, and a <strong class="text-lime-400">Velmoran Cup win in 2023</strong>.
+                </p>
+                <p class="text-white/90 leading-relaxed">
+                  But with success comes pressure. The weight of over a century of expectations bears down on every match, every manager, every player. The fans—many of whom trace their family history alongside the club’s—demand nothing less than excellence. And the club, forged in fire and ambition, is determined to deliver.
+                </p>`,
+
+
+                // <h3 class="text-base font-semibold text-white mb-2">The Founding and Early Years <span class="text-base font-normal text-white/80">(1919-1930s)</span></h3>
+                // <p class="mb-4 text-white/90 leading-relaxed">Valdren Atletika was born from the soot and steam of the Valdren Ironworks, a colossal industrial force that forged not just steel, but the very identity of the Velmoran capital. What began as a worker's recreational club quickly became a symbol of industrial might and capital dominance, bankrolled by the Ironworks' formidable owner, <strong class="text-lime-400">Lord Kaelan Valdren</strong>. He saw the team as an extension of his business empire—a disciplined, powerful force that would crush all opposition.</p>
+                // <p class="mb-6 text-white/90 leading-relaxed">The team's early style of play mirrored their origin: unyielding, rugged, and built on a foundation of raw strength and tactical discipline. They were a team of hard-nosed professionals who played every match as if it were a battle for the city's soul.</p>
+
+                // <h3 class="text-base font-semibold text-white mb-2">The Golden Era: Forging a Dynasty <span class="text-base font-normal text-white/80">(1930s-1960s)</span></h3>
+                // <p class="mb-4 text-white/90 leading-relaxed">This was the era when Valdren Atletika ascended from regional powerhouse to national institution. Under the visionary management of <strong class="text-lime-400">"The Architect" Lorian Steelborn</strong>, the club refined its rugged style into a more elegant, yet still physically dominant, brand of football. This period saw them capture an incredible <strong class="text-lime-400">five national titles</strong> and <strong class="text-lime-400">three Velmoran Cups</strong>.</p>
+                // <p class="mb-6 text-white/90 leading-relaxed">The team's heart was in its midfield, orchestrated by the legendary playmaker, <strong class="text-lime-400">Marius "The Maestro" Thorne</strong>, and anchored by the granite-tough defender, <strong class="text-lime-400">Garrick Stonehand</strong>. Their most iconic victory came in the 1952 championship final, a 2-1 win over rivals Zarnov Union in a match known as "The Strike of '52," where Valdren scored the winning goal in the final minute to seal the title and cement their dynasty.</p>
+
+                // <h3 class="text-base font-semibold text-white mb-2">The Turn of the Century and The Era of Modernization <span class="text-base font-normal text-white/80">(1990s-2010s)</span></h3>
+                // <p class="mb-4 text-white/90 leading-relaxed">While Valdren never truly fell from grace, the late 20th century saw them struggle to maintain their iron grip on the league. The club's traditionalist approach, once its strength, began to look outdated. A series of near-misses and disappointing cup exits led to a decade of discontent among the fiercely loyal fanbase.</p>
+                // <p class="mb-6 text-white/90 leading-relaxed">The club's reawakening came in the early 2000s, spearheaded by the new CEO, <strong class="text-lime-400">Elara Valdren</strong>, a descendant of the founder. She initiated a controversial, but ultimately successful, modernization effort. The club embraced cutting-edge analytics, a global scouting network, and aggressive marketing to expand its brand. This period also saw the club's youth academy blossom, producing stars like the Velmoran national team captain, <strong class="text-lime-400">Lukas Vorn</strong>. This shift balanced the club's proud traditions with a new, ambitious outlook, ensuring their place at the top of Velmoran football.</p>
+
+                // <h3 class="text-base font-semibold text-white mb-2">Today: Balancing History and Ambition</h3>
+                // <p class="text-white/90 leading-relaxed">Valdren Atletika is now a modern-day powerhouse, a constant presence in the fight for the national title and a symbol of Velmora's footballing strength on the global stage. The pressure to win is immense, a weight carried not just by the players and managers but by the entire organization. The fans, who see the club as the very soul of Velmoran football, demand nothing less than excellence, a legacy forged in the heat of the ironworks and tempered by over a century of ambition.</p>
+              
               // "Valdren Atletika was born in the industrial heart of Velmora, backed by the powerful Valdren Ironworks. Initially a worker’s recreation outlet, the club became a symbol of capital dominace in both sport and industry. Known for its rugged yet elegant playing style, Valdren rose to prominence between the 1930s and 60s, capturing multiple national titles.\nIn the 2000s, the club embraced modernization, balancing tradition with cutting-edge analytics and aggressive marketing. The fans — fiercely loyal — see the club as the soul of Velmoran football.\nThe Industrial Iron Derby vs Zarnov Union is the oldest in the country, with roots tracing back to factory strikes and urban class tensions. The club is also embroiled in rising rivalries with Braknov Spartak (military pride) and Kresna Dynamo (media-fueled antagonism).\nToday, Valdren Atletika is a national powerhouse, balancing history, ambition, and pressure like few others.",
             club_values: ["Forged in tradition, built for dominace."],
             club_slogan:
@@ -5107,7 +5202,7 @@ export const regionData = {
             fan_clubs: [
               "The Iron Eagles Union",
               "Forge Side Ultras",
-              "Capital Roar Collective",
+              "Capital's Roar",
             ],
             chants : [
               {
@@ -5134,19 +5229,19 @@ export const regionData = {
             supporter_quotes: [
               {
                 text: "Every matchday is a pilgrimage. This club runs in my blood.",
-                author: "Mira D., North Stand",
+                author: "Garran Volek, Forgeview Terrace",
               },
               {
-                text: "We don't support, we embody the roar.",
-                author: "Hadi R., Ultras Core",
+                text: "It’s not just football here. It’s pride, history, and a bit of madness.",
+                author: "Rilda Steen, Ultras Core",
               },
               {
-                text: "Win or lose, it's our anthem that echoes the loudest.",
-                author: "Lior G., South Curve",
+                text: "I grew up watching matches on my dad’s shoulders. This club raised me.",
+                author: "Naela Kort, South Curve",
               },
               {
                 text: "From the streets of Valdren to the heart of the Forge — we never miss a beat.",
-                author: "Kaela V., City Chant Crew",
+                author: "Kaela V., Pub End Choir",
               },
             ],
           },
@@ -5165,8 +5260,39 @@ export const regionData = {
             colors: ["rgb(102,30,40)", "rgb(219,174,134)"],
             stadium: "Stokers’ Hollow",
             coord: [250, 230],
-            club_history:
-              "Founded by railway furnace stokers in the Zarnov Iron Belt, Red Hearth Wanderers is a gritty, old-school club with roots in transient labour unions and steam-era rail culture. The club got its name from the ironworks’ glowing furnaces — 'red hearts of the people.' Known for their nomadic early years, they’ve always played with fire in their bellies and mud on their boots. Overshadowed by Zarnov Union, they remain fiercely proud of their underdog identity and loyal support.",
+            club_history: `
+            <h3 class="text-base font-semibold text-white mb-2">
+              The Founding: Born from Fire <span class="text-base font-normal text-white/80">(1919–1940s)</span>
+            </h3>
+            <p class="mb-4 text-white/90 leading-relaxed">
+              Red Hearth Wanderers was founded in <strong class="text-orange-300">1919</strong>, a club forged not on a pristine pitch, but in the sweltering heat of Zarnov's ironworks. Its founders were the furnace stokers of the Zarnov Iron Belt—a transient, hard-bitten community whose lives were defined by the rhythm of steam engines and the glow of molten metal. They named the club after the ironworks' glowing furnaces, which they called "the red hearts of the people," symbolizing the relentless fire in their bellies and the laboring heart of the nation.
+            </p>
+            <p class="mb-6 text-white/90 leading-relaxed">
+              In these early years, the "Wanderers" part of their name was no mere poetic flourish. Lacking a permanent home, the club played on dusty, makeshift pitches across the industrial belt, their identity as a nomadic, defiant underdog taking root. Their style of play was a direct reflection of their origins: fiery, physical, and played with a raw intensity that often left opponents battered and bewildered.
+            </p>
+
+            <h3 class="text-base font-semibold text-white mb-2">
+              The Zarnov Derby: Living in the Shadow of the Union <span class="text-base font-normal text-white/80">(1950s–1980s)</span>
+            </h3>
+            <p class="mb-4 text-white/90 leading-relaxed">
+              As Velmoran football began to formalize, so did Red Hearth Wanderers. They settled into a more permanent home, but their greatest challenge was a local one: the rise of Zarnov Union. Union, with its state backing and more polished image, became the city’s flagship club. This era cemented the fierce rivalry between the two teams and solidified the Wanderers' identity as the eternal underdogs. The Zarnov Derby became a battle for the city’s soul—the polished, corporate machine of Union against the gritty, blue-collar spirit of the Wanderers.
+            </p>
+            <p class="mb-6 text-white/90 leading-relaxed">
+              Despite being consistently overshadowed, the Wanderers' fans remained fiercely loyal, their support a proud declaration of their roots. They celebrated every small victory and sang louder in defeat, their unwavering loyalty becoming the club's most valuable asset. While they didn't collect major trophies, their legacy was built on pride, passion, and the fighting spirit they showed in every match against their city rivals.
+            </p>
+
+            <h3 class="text-base font-semibold text-white mb-2">
+              The Era of Scrappy Persistence <span class="text-base font-normal text-white/80">(1990s–Present)</span>
+            </h3>
+            <p class="mb-4 text-white/90 leading-relaxed">
+              In the modern era, Red Hearth Wanderers continue to embody their founding spirit. They have never been a glamorous club, but they are a consistent presence in the Velmoran National Liga, a testament to their grit and resilience. The club is known for its no-nonsense transfer policy and its focus on developing hard-working, disciplined players. Their style of play remains rooted in their history: a physical, high-energy game designed to out-work and out-last the opposition.
+            </p>
+            <p class="mb-6 text-white/90 leading-relaxed">
+              While they may not have a long list of trophies, their history is written in the hearts of their fans and in the mud and sweat left on the pitches across Velmora. They are the club of the people, a symbol of perseverance and defiance in the face of long odds. Red Hearth Wanderers is a reminder that in Velmoran football, heart and fire can often be more powerful than wealth and glory.
+            </p>
+            `,
+
+              // "Founded by railway furnace stokers in the Zarnov Iron Belt, Red Hearth Wanderers is a gritty, old-school club with roots in transient labour unions and steam-era rail culture. The club got its name from the ironworks’ glowing furnaces — 'red hearts of the people.' Known for their nomadic early years, they’ve always played with fire in their bellies and mud on their boots. Overshadowed by Zarnov Union, they remain fiercely proud of their underdog identity and loyal support.",
             club_values: ["Grit. Pride. Persistence."],
             club_slogan: "Hearts burn brighter.",
             competition_history: {
@@ -5295,8 +5421,51 @@ export const regionData = {
             colors: ["rgb(88,89,91)", "rgb(244,150,34)"],
             stadium: "Red Foundry Park",
             coord: [240, 220],
-            club_history:
-              "Zarnov Union was born from the riveter syndicates and dockworkers' cooperatives in the industrial rise of Velmora’s eastern heartland. It’s the only major fan-owned club in the Velmoran top flight, governed by the Zarnov United Trust through a democratic model.\nTheir rivalry with Valdren Atletika is as old as the league itself, symbolizing everything from class warfare to regional pride. Fans call it The Iron Derby, but to locals, it’s just war.\nZarnov has long punched above its fi[]cial weight, producing legends from its academy and instilling fierce tactical discipline. The stadium, The Forge, is considered one of the most intimidating away days in Velmora.\nThe club’s 2025 title win broke a 56-year drought and was widely considered one of the greatest footballing moments in national history.",
+            club_history:`
+              <h3 class="text-base font-semibold text-white mb-2">
+                Born of the Docks: The Working People's Club <span class="text-base font-normal text-white/80">(1927–1950s)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                Zarnov Union wasn’t founded in a boardroom — it was built on the shoulders of riveters, dockhands, and syndicate men who wanted more than just fair wages; they wanted identity. Formed in Velmora’s eastern quarter during the industrial surge, the club emerged as a beacon of solidarity. Unlike aristocrat-backed giants, Zarnov Union was — and still is — a club owned by the people.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                The establishment of the <strong class="text-amber-400">Zarnov United Trust</strong> gave fans an official voice and real power. Through this democratic model, the supporters became the soul — and the spine — of the club. They weren’t just in the stands; they were on the board, in the budget meetings, and voting on key appointments. This grassroots strength saw its first major reward in <strong class="text-amber-400">1954</strong>, when Zarnov Union claimed its first <strong class="text-amber-400">Velmoran Super League title</strong>, followed by a <strong class="text-amber-400">Velmoran Cup victory</strong> in <strong class="text-amber-400">1955</strong>.
+              </p>
+
+              <h3 class="text-base font-semibold text-white mb-2">
+                Rising Through Resistance <span class="text-base font-normal text-white/80">(1960s–1980s)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                While other clubs bankrolled superstars, Zarnov relied on sweat, tactics, and local talent. The 1960s brought a second golden moment — <strong class="text-amber-400">a league and cup double in 1964–65</strong> — cementing their place in the national consciousness. It wasn't just a triumph on the pitch; it was a working-class victory against the moneyed elite.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                Throughout the 1970s and early 80s, Zarnov remained a thorn in the side of bigger clubs. Another league win in <strong class="text-amber-400">1979</strong> and back-to-back cup successes in <strong class="text-amber-400">1980 and 1985</strong> showed the Forge Boys were far from fading. The Eastside Academy began producing names that would become fixtures in the Velmoran national team — a point of pride for fans who believed in developing, not buying, greatness.
+              </p>
+
+              <h3 class="text-base font-semibold text-white mb-2">
+                Grit, Graft, and a Long Wait <span class="text-base font-normal text-white/80">(1990s–2010s)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                The 90s and early 2000s were a test of faith. While others rose on the wave of commercialization, Zarnov Union stayed rooted in its principles. There were fewer trophies — a lone <strong class="text-amber-400">Velmoran Cup in 1997</strong> — but no shortage of pride. The stands stayed packed. The songs never stopped.
+              </p>
+              <p class="mb-6 text-white/90 leading-relaxed">
+                Fans from this era didn’t follow the club for glory — they followed it for what it stood for. Every hard-earned point, every academy debut, every chant in The Forge meant more than silverware ever could. The club stayed afloat in turbulent financial waters thanks to the same community that built it.
+              </p>
+
+              <h3 class="text-base font-semibold text-white mb-2">
+                The Revival of the Forge <span class="text-base font-normal text-white/80">(2020s–)</span>
+              </h3>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                The 2020s have been nothing short of a renaissance. The arrival of a new generation of academy graduates — molded in Zarnov’s traditions but armed with modern flair — reshaped the club’s destiny. The <strong class="text-amber-400">2021 league title</strong> was a seismic moment, their first in over 40 years. But it was just a prelude.
+              </p>
+              <p class="mb-4 text-white/90 leading-relaxed">
+                The <strong class="text-amber-400">2021 league title</strong> was a seismic moment — the end of a <strong class="text-amber-400">42-year drought</strong>. That campaign wasn’t just celebrated; it was canonized. For many, it stands among the greatest footballing achievements in Velmoran history.
+              </p>
+              <p class="text-white/90 leading-relaxed">
+                In <strong class="text-amber-400">2022</strong>, Zarnov lifted the <strong class="text-amber-400">Velmoran Cup</strong> again, sending The Forge into raptures and proving the revival wasn’t a fluke. Today, Zarnov Union remains fan-owned, fiercely competitive, and impossible to ignore. Their rivalry with Valdren Atletika — known as <strong class="text-amber-400">The Iron Derby</strong> — remains the most heated in the nation. But for those who wear the black and rust, the club is more than its rivals, more than its titles — it’s a reflection of who they are: resilient, united, and unbreakable.
+              </p>
+            `,
+              // "Zarnov Union was born from the riveter syndicates and dockworkers' cooperatives in the industrial rise of Velmora’s eastern heartland. It’s the only major fan-owned club in the Velmoran top flight, governed by the Zarnov United Trust through a democratic model.\nTheir rivalry with Valdren Atletika is as old as the league itself, symbolizing everything from class warfare to regional pride. Fans call it The Iron Derby, but to locals, it’s just war.\nZarnov has long punched above its fi[]cial weight, producing legends from its academy and instilling fierce tactical discipline. The stadium, The Forge, is considered one of the most intimidating away days in Velmora.\nThe club’s 2025 title win broke a 56-year drought and was widely considered one of the greatest footballing moments in national history.",
             club_values: ["Power to the people, pride in the press."],
             club_slogan:
               "Hammers High! Riveters Rise! Zarnov Fights with Iron Pride!",
@@ -5320,14 +5489,16 @@ export const regionData = {
                 winnerIn: [],
               },
               TVC: {
-                winnerIn: [],
+                winnerIn: [1955, 1964, 1980, 1985, 1997, 2022],
               },
             },
             kits: {
-              home: "assets/kits/zaruni/home.svg",
-              home_back: "assets/kits/zaruni/home_back.svg",
-              away: "assets/kits/zaruni/away.svg",
-              away_back: "assets/kits/zaruni/away_back.svg",
+              home_kit_svg: 14,
+              home: [[10, 23, 61], [122, 175, 55], [255, 255, 255], [255, 255, 255]],
+              home_back: 'same_as_front',
+              away_kit_svg: 35,
+              away: [[122, 175, 55], [255, 255, 255], [255, 255, 255], [255, 255, 255]],
+              away_back: 'same_as_front',
             },
             supporter_profile: {
               loyalty: 20,
@@ -5355,11 +5526,81 @@ export const regionData = {
             ],
             players_alumni: {
               favorites: [],
-              icons: [],
-              legends: [],
+              icons: [
+                { name: "Rina Velkov", role: "Chairperson (Zarnov United Trust)" },
+                { name: "Tarek Vos", role: "Player" },
+                { name: "Eren Dalvik", role: "Player" },
+                { name: "Sera Valen", role: "Director of Football" },
+                { name: "Niko Brask", role: "Manager" },
+                { name: "Harlan Mev", role: "Academy Director" },
+                { name: "Vel Tassar", role: "Player" },
+              ],
+              legends: [
+                { name: "Grigor Talmec", role: "Founding Member / Player / Manager" },
+                { name: "Malik Draven", role: "Player" },
+                { name: "Eda Rask", role: "Player" },
+                { name: "Iven Skarn", role: "Player" },
+                { name: "Doran Mekk", role: "Manager" },
+                { name: "Serel Vos", role: "Player" },
+                { name: "Kael Varek", role: "Player" },
+              ],
             },
-            schedule: [],
-            fan_clubs: [],
+            schedule: [
+              {
+                date: "2025-08-05",
+                opponent: "Zarnov Union",
+                home: true,
+                venue: "Titan Forge Arena",
+                score: "2-1",
+                tournament: "VSL"
+              },
+              {
+                date: "2025-08-12",
+                opponent: "Kresna Dynamo",
+                home: false,
+                venue: "The Dynamo Spire",
+                score: "3-1",
+                tournament: "VSL"
+              },
+              {
+                date: "2025-08-19",
+                opponent: "Sevrin Lokomotiv",
+                home: true,
+                venue: "Titan Forge Arena",
+                score: "2-2",
+                tournament: "VSL"
+              },
+              {
+                date: "2025-08-26",
+                opponent: "Braknov Spartak",
+                home: false,
+                venue: "Braknov Steel Field",
+                score: null,
+                tournament: "VSL"
+              },
+              {
+                date: "2025-08-30",
+                opponent: "Velgrad Spartans",
+                home: true,
+                venue: "Velgrad Civic Arena",
+                score: null,
+                tournament: "TVC"
+              },
+              {
+                date: "2025-09-04",
+                opponent: "Karnov Ironfields",
+                home: false,
+                venue: "Miner's Hollow",
+                score: null,
+                tournament: "VSL"
+              },
+            ],
+            fan_clubs: [
+              "March of the Union",
+              "Ironstand Ultras",
+              "Never Redside",
+              "The Resistance"
+            ],
             chants: [
               {
                 "title": "Union Working Song",
@@ -5380,7 +5621,24 @@ export const regionData = {
                 ]
               },
             ],
-            supporter_quotes: [],
+            supporter_quotes: [
+              {
+                text: "We don’t just watch the match — we defend what we built. Every week.",
+                author: "Maela T., The Workers’ End"
+              },
+              {
+                text: "You’ll hear us in the tunnel, in the stands, and in your nightmares. Welcome to The Red Foundry Park.",
+                author: "Tenn R., Ironstand Ultras"
+              },
+              {
+                text: "When we beat Valdren in their own backyard, I cried harder than I did at my wedding.",
+                author: "Oren J., The Resistance"
+              },
+              {
+                text: "The Iron Derby? That’s not football — that’s east vs empire.",
+                author: "Rell N., March of the Union"
+              },
+            ],
           },
         ],
       },
