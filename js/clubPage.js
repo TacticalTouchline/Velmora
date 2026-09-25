@@ -1,669 +1,531 @@
-// clubPage.js
-import { regionData } from './regionData.js';
-
-function getClubDataByName(name) {
-  for (const region of Object.values(regionData)) {
-    for (const city of Object.values(region.cities)) {
-      const match = city.clubs.find(c => c.name === name);
-      if (match) return match;
-    }
-  }
-  return null;
-}
-
-async function loadComponent(path) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`Failed to load ${path}`);
-  return await res.text();
-}
-
-async function renderClubPage(club) {
-  const container = document.getElementById('club-container');
-  container.innerHTML = '';
-
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('flex', 'flex-col', 'gap-4');
-
-  const sections = [
-    'header',
-    'schedule',
-    'hero', 
-    'history-and-honors',
-    'kits',
-    'alumni',
-    'rivals-and-derbies',
-    'supporters',
-    'footer',
-  ];
-
-  for (const section of sections) {
-    const html = await loadComponent(`components/clubPage/${section}.html`);
-    const block = document.createElement('div');
-    block.innerHTML = html;
-    wrapper.appendChild(block);
-  }
-
-  populateData(wrapper, club);
-  container.appendChild(wrapper);
-}
-
-
-async function populateData(root, club) {
-  if (club.colors?.length >= 2) {
-    const header = root.querySelector('#club-header');
-    if (header) {
-      header.style.setProperty('--club-color-primary', club.colors[0]);
-      header.style.setProperty('--club-color-secondary', club.colors[1]);
-    }
-  }
-
-
-  // 🏟️ Populate hero section
-  const stadiumImg = root.querySelector('#club-stadium-image');
-  if (stadiumImg) stadiumImg.src = `assets/stadiums/${encodeURIComponent(club.name)}.png` || 'https://via.placeholder.com/1200x800?text=Stadium+Image';
-
-  const heroClubLogo = root.querySelector('#hero-club-logo');
-  if (heroClubLogo) heroClubLogo.src = club.club_logo || 'https://via.placeholder.com/800x800?text=club+logo';
-
-  const heroName = root.querySelector('#hero-club-name');
-  if (heroName) heroName.textContent = club.name;
-
-  const heroStadium = root.querySelector('#hero-club-stadium');
-  if (heroStadium) heroStadium.textContent = `🏟️ ${club.stadium}`;
-
-  const heroFounded = root.querySelector('#hero-club-founded span');
-  if (heroFounded) heroFounded.textContent = club.founded;
-
-  const heroClubSlogan = root.querySelector('#hero-club-slogan');
-  if (heroClubSlogan) heroClubSlogan.textContent = club.club_slogan;
-
-
-  root.querySelector('#club-logo')?.setAttribute('src', `assets/logos/clubs/normal/${encodeURIComponent(club.name)}.png`);
-  root.querySelector('#club-logo')?.setAttribute('alt', `${club.name} Logo`);
-  root.querySelector('#club-name') && (root.querySelector('#club-name').textContent = club.name);
-  root.querySelector('#club-nickname') && (root.querySelector('#club-nickname').textContent = club.nickname);
-  if (club.chants) {root.querySelector('#club-chant') && (root.querySelector('#club-chant').textContent = club.chants[0].lyrics.join('\n'));}
-
-  root.querySelector('#club-stadium') && (root.querySelector('#club-stadium').textContent = club.stadium);
-  root.querySelector('#club-founded') && (root.querySelector('#club-founded').textContent = club.founded);
-  root.querySelector('#club-hashtag') && (root.querySelector('#club-hashtag').textContent = club.hashtag);
-
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
-
-  if (club.schedule && root.querySelector('#match-strip')) {
-    const strip = root.querySelector('#match-strip');
-    const today = new Date(2025, 7, 22);
-
-    let nextMatchMarked = false;
-    for (const match of club.schedule) {
-      const matchDate = new Date(match.date);
-      const isPast = matchDate < today;
-      const isUpcoming = !match.score && !isPast;
-      const hasScore = !!match.score;
-
-      // Background color based on result
-      let bg = 'bg-white/10';
-      let scoreHTML = '';
-      if (hasScore) {
-        let homeScore = null, awayScore = null;
-        if (typeof match.score === 'string' && match.score.includes('-')) {
-          [homeScore, awayScore] = match.score.split('-').map(s => parseInt(s.trim()));
-        }
-        const clubIsHome = match.home;
-        const win = (clubIsHome && homeScore > awayScore) || (!clubIsHome && awayScore > homeScore);
-        const draw = homeScore === awayScore;
-        bg = win ? 'bg-green-800/60' : draw ? 'bg-yellow-800/50' : 'bg-red-800/60';
-        scoreHTML = `<div class="text-center text-md font-bold text-gray-200 pt-1">${homeScore} - ${awayScore}</div>`;
-      }
-
-      const opponentLogo = `assets/logos/clubs/${encodeURIComponent(match.opponent)}.png`;
-      const clubLogo = `assets/logos/clubs/${encodeURIComponent(club.name)}.png`;
-
-      const card = document.createElement('div');
-      card.className = `relative min-w-[180px] rounded-lg ${bg} p-1 shadow border border-white/10 flex flex-col items-center justify-between`;
-      if (isUpcoming && !nextMatchMarked) {
-        card.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
-        card.dataset.upcoming = 'true';
-        card.dataset.showNextLabel = 'true';
-        nextMatchMarked = true;
-      }
-
-      card.innerHTML = `
-        ${card.dataset.showNextLabel === 'true' ? 
-          '<div class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] px-2 py-0.5 rounded-full font-bold uppercase z-10">Next</div>' 
-          : ''
-        } 
-        <div class="flex gap-2 justify-between">  
-          <div class="absolute ${(match.tournament==='TVC')? '-left-6' : '-left-3'} top-1/2 transform -translate-y-1/2 z-10">
-            <img src="assets/competitions/${match.tournament}.png" alt="${match.tournament}" class="h-12 w-auto shadow-lg rounded-lg" />
-          </div>         
-        <div class="grid grid-cols-[15%_85%] gap-2 w-full rounded pl-2 pr-2">
-          <div class="relative text-gray-200 text-center -left-1">
-            <div class="relative z-5 font-semibold">
-              <p class="text-xs text-shadow-lg/30">${months[matchDate.getMonth()-1]}</p>
-              <p class="text-base text-shadow-lg/30">${matchDate.getDate()}</p>
-            </div>
-          </div>
-
-          <div class="relative text-white">
-            <!-- Stadium background image -->
-            <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('assets/stadiums/${match.home ? club.name : match.opponent}.png');"></div>
-            <!-- Overlay (Black) -->
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-1"></div>
-            <!-- Score Details on top of the background and overlay -->
-            <div class="relative z-5 flex items-center justify-center gap-2 h-full">
-              <img src="${match.home ? clubLogo : opponentLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
-              ${hasScore ? scoreHTML : '<span class="text-gray-200 font-semibold text-sm">vs</span>'}
-              <img src="${match.home ? opponentLogo : clubLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
-            </div>
-          </div>
-        </div>
-        </div>
-        </div>
-      `;
-
-      strip.appendChild(card);
-    }
-
-    // Scroll to upcoming match
-    setTimeout(() => {
-      const upcomingCard = strip.querySelector('[data-upcoming="true"]');
-      if (upcomingCard) {
-        const offset = upcomingCard.offsetLeft - strip.offsetWidth / 2 + upcomingCard.offsetWidth / 2;
-        strip.scrollTo({ left: offset, behavior: 'smooth' });
-      }
-
-      const leftBtn = document.getElementById('match-left');
-      const rightBtn = document.getElementById('match-right');
-      if (!leftBtn || !rightBtn) return;
-
-      leftBtn.addEventListener('click', () => {
-        strip.scrollBy({ left: -200, behavior: 'smooth' });
-      });
-
-      rightBtn.addEventListener('click', () => {
-        strip.scrollBy({ left: 200, behavior: 'smooth' });
-      });
-    }, 100);
-  }
-  
-  if (club.competition_history && root.querySelector('#club-honors')) {
-    const honorsEl = root.querySelector('#club-honors');
-    for (const [comp, data] of Object.entries(club.competition_history)) {
-      if (!data.winnerIn?.length) continue;
-      const trophy = document.createElement('div');
-      trophy.className = 'flex flex-col items-center';
-      trophy.title = data.winnerIn.join(', ');
-      trophy.innerHTML = `
-        <img src="assets/competitions/${comp}.png" class="h-60 w-auto object-contain mx-auto" />
-        <span class="text-xl text-gray-300 mt-1 block text-center">×${data.winnerIn.length}</span>
-      `;
-      honorsEl.appendChild(trophy);
-    }
-  }  
-
-  if (club.club_history && root.querySelector('#club-history')) {
-    const container = root.querySelector('#club-history');
-
-    // Create a temporary DOM parser
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = club.club_history;
-
-    const allNodes = Array.from(tempDiv.childNodes);
-
-    let visibleContent = '';
-    let h3Count = 0;
-
-    for (const node of allNodes) {
-      if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'h3') {
-        h3Count++;
-      }
-
-      visibleContent += node.outerHTML ?? node.textContent;
-
-      if (h3Count === 2) break;
-    }
-
-    const fullContent = tempDiv.innerHTML;
-
-    const contentWrapper = document.createElement('div');
-    const toggleBtn = document.createElement('button');
-
-    contentWrapper.innerHTML = visibleContent;
-    toggleBtn.textContent = 'Read More';
-    toggleBtn.className = 'text-blue-600 font-semibold text-md mt-2 block';
-
-    let expanded = false;
-
-    toggleBtn.addEventListener('click', () => {
-      expanded = !expanded;
-      contentWrapper.innerHTML = expanded ? fullContent : visibleContent;
-      toggleBtn.textContent = expanded ? 'Read Less' : 'Read More';
-    });
-
-    container.innerHTML = '';
-    container.appendChild(contentWrapper);
-    container.appendChild(toggleBtn);
-  }
-
-
-  // if (club.kits) {
-  // const home = root.querySelector('#kit-home');
-  // if (home) {
-  //   const front = `assets/kits/${club.kits.home_kit_svg}.svg` || 'https://via.placeholder.com/140';
-  //   const back = `assets/kits/${club.kits.away_kit_svg}.svg` || 'https://via.placeholder.com/140';
-  //   home.src = front;
-  //   home.dataset.front = front;
-  //   home.dataset.back = back;
-  // }
-
-  // const away = root.querySelector('#kit-away');
-  // if (away) {
-  //   const front = `assets/kits/${club.kits.away_kit_svg}.svg`  || 'https://via.placeholder.com/140';
-  //   const back = `assets/kits/${club.kits.home_kit_svg}.svg`  || 'https://via.placeholder.com/140';
-  //   away.src = front;
-  //   away.dataset.front = front;
-  //   away.dataset.back = back;
-  // }
-
-  // if (club.kits.third) {
-  //   const thirdKit = document.createElement('div');
-  //   thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
-  //   const thirdFront = club.kits.third;
-  //   const thirdBack = thirdFront.replace(/\\.svg$/, '_back.png');
-
-  //   thirdKit.innerHTML = `
-  //     <img src="${thirdFront}" alt="Third Kit"
-  //          class="w-2/3 mx-auto object-contain mb-2 rounded shadow"
-  //          onmouseover="this.src=this.dataset.back"
-  //          onmouseout="this.src=this.dataset.front"
-  //          data-front="${thirdFront}"
-  //          data-back="${thirdBack}" />
-  //     <p class="text-sm text-gray-300">Third Kit<br/>
-  //       <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
-  //       <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
-  //     </p>
-  //   `;
-  //   root.querySelector('#kits-grid')?.appendChild(thirdKit);
-  // }
-  // }
-
-  if (club.kits) {
-    // Nested helper function to load and inject SVG content
-    async function loadSvg(containerId, svgPath) {
-      const container = root.querySelector(`#${containerId}`);
-      if (!container) return;
-
-      try {
-        const response = await fetch(svgPath);
-        if (!response.ok) throw new Error(`Failed to load SVG from ${svgPath}`);
-        const svgText = await response.text();
-        container.innerHTML = svgText;
-      } catch (error) {
-        console.error(`Error loading SVG for container ${containerId}:`, error);
-      }
-    }
-
-    // Nested helper function to set CSS variables
-    function setKitColors(containerId, colors) {
-      const container = root.querySelector(`#${containerId}`);
-      if (!container) return;
-      container.style.setProperty('--kit-primary-color', `rgb(${colors[0][0]}, ${colors[0][1]}, ${colors[0][2]})`);
-      container.style.setProperty('--kit-secondary-color', `rgb(${colors[1][0]}, ${colors[1][1]}, ${colors[1][2]})`);
-      container.style.setProperty('--kit-accent-color', `rgb(${colors[2][0]}, ${colors[2][1]}, ${colors[2][2]})`);
-      container.style.setProperty('--kit-number-color', `rgb(${colors[3][0]}, ${colors[3][1]}, ${colors[3][2]})`);
-    }
-
-    // Function to handle a single kit display
-    async function displayKit(kitType) {
-      const kitData = club.kits;
-      const colors = kitData[kitType];
-      const svgNumber = kitData[`${kitType}_kit_svg`];
-      const frontContainerId = `kit-${kitType}-front`;
-      const backContainerId = `kit-${kitType}-back`;
-
-      // Load and style the front of the kit
-      const frontSvgPath = `assets/kits/${svgNumber}.svg`;
-      await loadSvg(frontContainerId, frontSvgPath);
-      setKitColors(frontContainerId, colors);
-
-      // Handle the back of the kit
-      const backType = kitData[`${kitType}_back`];
-
-      if (backType === 'same_as_front') {
-        const frontSvg = root.querySelector(`#${frontContainerId} svg`);
-        if (frontSvg) {
-          const backSvg = frontSvg.cloneNode(true);
-          const backContainer = root.querySelector(`#${backContainerId}`);
-          if (backContainer) {
-            backContainer.innerHTML = '';
-            backContainer.appendChild(backSvg);
-            setKitColors(backContainerId, colors);
-          }
-        }
-      } else {
-        const backSvgPath = `assets/kits/backs/${backType}.svg`;
-        await loadSvg(backContainerId, backSvgPath);
-        setKitColors(backContainerId, colors);
-      }
-
-      // Add mouseover/mouseout functionality
-      const mainContainer = root.querySelector(`#kit-${kitType}-container`);
-      const frontContainer = root.querySelector(`#${frontContainerId}`);
-      const backContainer = root.querySelector(`#${backContainerId}`);
-
-      if (mainContainer && frontContainer && backContainer) {
-        mainContainer.addEventListener('mouseover', () => {
-          frontContainer.classList.add('hidden');
-          backContainer.classList.remove('hidden');
-        });
-        mainContainer.addEventListener('mouseout', () => {
-          backContainer.classList.add('hidden');
-          frontContainer.classList.remove('hidden');
-        });
-      }
-    }
-
-    // Call the display function for each kit type
-    await displayKit('home');
-    await displayKit('away');
-
-    if (club.kits.third) {
-      const thirdKit = document.createElement('div');
-      thirdKit.className = 'bg-white/5 rounded-lg p-4 text-center';
-      thirdKit.innerHTML = `
-        <div id="third-kit-container" class="w-2/3 mx-auto object-contain mb-2 rounded shadow">
-          <div id="third-kit-front"></div>
-        </div>
-        <p class="text-sm text-gray-300">Third Kit<br/>
-          <span class='text-xs text-green-400 font-semibold'>$39.99</span><br/>
-          <button class='mt-1 px-3 py-1 bg-amber-500/80 hover:bg-amber-500 text-xs text-black font-semibold rounded'>Buy Now</button>
-        </p>
-      `;
-      root.querySelector('#kits-grid')?.appendChild(thirdKit);
-      await loadSvg('third-kit-front', club.kits.third);
-      // Optional: set third kit colors if you have the data
-      // setKitColors('third-kit-front', club.kits.third_colors);
-    }
-  }
-
-  if (club.players_alumni && root.querySelector('#club-legends')) {
-    for (const type of ['legends', 'icons']) {
-      const wrap = root.querySelector(`#club-${type}`);
-      for (const player of club.players_alumni[type] || []) {
-        const img = document.createElement('img');
-        img.src = `assets/players/${player["name"]}.png`;
-        img.alt = `${player["name"]} - ${player["role"]}`;
-        img.title = `${player["name"]} - ${player["role"]}`;
-        img.className = 'h-20 w-20 rounded-full object-cover bg-white/10';
-        img.onerror = () => {
-          // Fetch a random user from RandomUser.me
-          fetch('https://randomuser.me/api/?gender=male')
-            .then(response => response.json())
-            .then(data => {
-              // Get the user's picture (default is large, you can adjust the size)
-              img.src = data.results[0].picture.large;
-            })
-            .catch(() => {
-              // In case the API request fails, set a fallback image
-              img.src = 'https://randomuser.me/api/portraits/lego/1.jpg'; // Lego placeholder
-            });
-        };        
-        wrap.appendChild(img);
-      }
-    }
-  }
-
-  if (club.rivals && root.querySelector('#rival-strip')) {
-  const strip = root.querySelector('#rival-strip');
-  const rivalMap = new Map(club.rivals.map(r => [r.club, r]));
-
-  const derbies = (club.derbies || []).reduce((acc, derby) => {
-    acc[derby.team2] = derby;
-    return acc;
-  }, {});
-
-  for (const rival of club.rivals) {
-    const derby = derbies[rival.club];
-    const logo = `assets/logos/clubs/${rival.club}.png`;
-
-    const card = document.createElement('div');
-    card.className = `min-w-[224px] bg-white/10 p-4 rounded-lg border border-white/10 shadow text-center flex flex-col items-center justify-between gap-2`;
-
-    card.innerHTML = `
-      <img src="${logo}" alt="${rival.club}" class="h-12 w-12 object-contain bg-white/10 rounded-full" />
-      <div>
-        <h3 class="text-sm font-semibold text-white">${rival.club}</h3>
-        <p class="text-xs text-gray-300 italic">${rival.reason}</p>
-      </div>
-      <div class="text-xs font-medium ${rival.level > 75 ? 'text-red-400' : rival.level > 50 ? 'text-orange-300' : 'text-blue-300'}">
-        Rivalry Level: ${rival.level}
-      </div>
-      ${
-        derby
-          ? `<div class="bg-blue-800/50 text-xs text-amber-300 px-2 py-1 rounded mt-1">
-              Derby: <strong>${derby.name}</strong>
-            </div>`
-          : ''
-      }
-      ${
-        (() => {
-          const today = new Date();
-          const nextMatch = club.schedule?.find(m => new Date(m.date) >= today && m.opponent === rival.club);
-          if (!nextMatch) {
-            return `
-            <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
-            <div class="flex justify-center items-center bg-white/10 text-xl text-gray-200 rounded px-2 py-1 min-h-[72px] w-[80%]">
-              <p>- </p>
-            </div>
-            `;
-          }
-          const matchDate = new Date(nextMatch.date);
-          const isHome = nextMatch.home;
-          const homeLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? club.name : nextMatch.opponent)}.png`;
-          const awayLogo = `assets/logos/clubs/${encodeURIComponent(isHome ? nextMatch.opponent : club.name)}.png`;
-
-          return `
-            <h4 class="text-sm text-amber-300 mt-2">Next Match</h4>
-
-            <div class="bg-white/10 text-xs text-gray-200 rounded px-2 py-1 relative"> 
-              <!-- Badge/logo -->
-              <div class="absolute ${(nextMatch.tournament==='TVC')? '-left-6' : '-left-3'} top-1/2 transform -translate-y-1/2 z-10">
-                <img src="assets/competitions/${nextMatch.tournament}.png" alt="${nextMatch.tournament}" class="h-12 w-auto shadow-lg rounded-lg" />
-              </div>
-
-              <!-- Group wrapper for hover behavior -->
-              <div class="group relative">
-                <div class="default-view">
-                  <div class="grid grid-cols-[15%_10%_75%] gap-2 w-full rounded pl-2 pr-2">
-                    <div class="relative text-gray-200 text-center">
-                      <div class="relative z-5 font-semibold">
-                        <p class="text-xs text-shadow-lg/30">${months[matchDate.getMonth()-1]}</p>
-                        <p class="text-base text-shadow-lg/30">${matchDate.getDate()}</p>
-                      </div>
-                    </div>
-                    <div class="w-px bg-gray-300 h-full opacity-30"></div>
-                    <div class="relative text-white -left-3">
-                      <div class="relative z-5 flex items-center justify-center gap-2 h-full">
-                        <img src="${nextMatch.home ? homeLogo : awayLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
-                        <span class="text-gray-200 font-semibold text-sm">vs</span>
-                        <img src="${nextMatch.home ? awayLogo : homeLogo}" class="h-8 w-8 object-contain bg-white/15 p-0.5 rounded" />
-                      </div>
-                    </div>
-                  </div>
-                  <hr class="opacity-30 mt-1 mb-1"/>
-                  <div class="text-xs text-center mt-1">🏟 ${nextMatch.venue}</div>
-                </div>
-
-                <!-- Hover content: hidden by default, shown on group hover -->
-                <div class="z-5 gap-2 hidden group-hover:flex absolute inset-0 items-center justify-center bg-blue-700 bg-opacity-75 hover:bg-blue-600 hover:bg-opacity-75 text-white text-md font-bold border border-blue-700 rounded transition duration-300 cursor-pointer">
-                  Book Tickets <span class="text-lg">➚</span>
-                </div>
-              </div>
-            </div>
-            `;
-          })
-        ()
-      }
-          `;
-
-    strip.appendChild(card);
-  }
-
-  // Add scroll behavior for slideshow
-  setTimeout(() => {
-    const leftBtn = document.getElementById('rival-left');
-    const rightBtn = document.getElementById('rival-right');
-    if (!leftBtn || !rightBtn) return;
-
-    leftBtn.addEventListener('click', () => {
-      strip.scrollBy({ left: -200, behavior: 'smooth' });
-    });
-
-    rightBtn.addEventListener('click', () => {
-      strip.scrollBy({ left: 200, behavior: 'smooth' });
-    });
-  }, 0);
-  }
-
-  if (club.supporter_profile && root.querySelector('#supporter-bar')) {
-    const bar = root.querySelector('#supporter-bar');
-    const total = Object.values(club.supporter_profile).reduce((a, b) => a + b, 0);
-    for (const [trait, value] of Object.entries(club.supporter_profile)) {
-      const segment = document.createElement('div');
-      segment.style.width = `${(value / total) * 100}%`;
-      segment.className = 'h-full relative flex items-center justify-center';
-      segment.innerHTML = `<span class="hidden md:block text-[10px] text-white font-semibold">
-        ${trait.charAt(0).toUpperCase() + trait.slice(1)}
-      </span>`;
-
-      segment.title = `${trait}: ${value}`;
-      segment.style.backgroundColor = {
-        loyalty: '#16a34a',
-        passion: '#dc2626',
-        patience: '#fbbf24',
-        affluence: '#0ea5e9',
-        temprament: '#7c3aed',
-        expectations: '#f472b6'
-      }[trait] || '#888';
-      bar.appendChild(segment);
-    }
-    
-    // 🎉 Fan Clubs
-    if (Array.isArray(club.fan_clubs)) {
-      const list = root.querySelector('#fan-clubs');
-      list.innerHTML = ''; // Clear existing content
-
-      for (const fanClub of club.fan_clubs) {
-        // Create the outer card container
-        const card = document.createElement('div');
-        card.className = 'text-sm shadow-md rounded-lg p-2 bg-white/10 border border-white/10 shadow divide-y divide-gray-300 divide-opacity-30';
-
-        const banner = document.createElement('img');
-        banner.src = `assets/fanClubs/${fanClub}.png`;
-        banner.className = "h-12 w-full rounded-full object-cover bg-white/10 mb-4"
-        banner.onerror = () => {
-          banner.src =  `https://picsum.photos/seed/${fanClub.replace(' ', '')}/800/200`;
-        }
-
-        // Fan club name
-        const name = document.createElement('p');
-        name.className = 'text-md text-center font-bold pt-2 mb-2';
-        name.textContent = fanClub || 'Unnamed Fan Club';
-
-        const iconRow = document.createElement('div');
-        iconRow.className = 'flex items-center justify-center pt-2 text-md divide-x divide-gray-300 divide-opacity-30';
-
-        // Helper function to wrap each icon in a span with padding
-        const createIcon = (emoji) => {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'w-full text-center'; // horizontal padding for space around dividers
-          wrapper.textContent = emoji;
-          return wrapper;
-        };
-
-        iconRow.appendChild(createIcon('📍'));
-        iconRow.appendChild(createIcon('📅'));
-        iconRow.appendChild(createIcon('📰'));
-
-        // Append elements to card
-        card.appendChild(banner);
-        card.appendChild(name);
-        card.appendChild(iconRow);
-
-        // Append card to the list container
-        list.appendChild(card);
-      }
-    }
-
-    // 💬 Fan Quotes
-    if (Array.isArray(club.supporter_quotes)) {
-      const quoteWrap = root.querySelector('#fan-quotes');
-      quoteWrap.innerHTML = ''; // clear defaults
-
-      for (const q of club.supporter_quotes) {
-        const block = document.createElement('div');
-
-        const length = q.text.length;
-        const shortText = q.text.slice(0, 150) + '...';
-
-        // Determine column span based on text length
-        let colSpanClass = '';
-        if (length > 360) {
-          colSpanClass = 'md:col-span-4';
-        } else if (length > 180) {
-          colSpanClass = 'md:col-span-2';
-        } // else col-span-1 (default, no class needed)
-
-        block.className = `
-          ${colSpanClass}
-          flex flex-col justify-between 
-          bg-gradient-to-br from-amber-500/10 to-blue-800/10 
-          border border-gray-200/10 p-4 rounded-xl shadow-lg 
-          transform transition-all hover:scale-105 duration-300 
-          backdrop-blur-sm
-        `.trim();
-
-        const isTruncated = length > 150;
-
-        block.innerHTML = `
-          <p class="italic quote-text">“${isTruncated ? shortText : q.text}”</p>
-          ${isTruncated ? '<button class="toggle-quote text-sm text-blue-600 font-semibold mt-2 self-end">Read More</button>' : ''}
-          <p class="text-xs text-right text-amber-400">— ${q.author}</p>
-        `;
-
-        if (isTruncated) {
-          const quoteText = block.querySelector('.quote-text');
-          const toggleBtn = block.querySelector('.toggle-quote');
-          let expanded = false;
-
-          toggleBtn.addEventListener('click', () => {
-            expanded = !expanded;
-            quoteText.textContent = `“${expanded ? q.text : shortText}”`;
-            toggleBtn.textContent = expanded ? 'Read Less' : 'Read More';
-          });
-        }
-
-        quoteWrap.appendChild(block);
-      }
-    }
-  }
-
-  if (club.club_slogan && root.querySelector('#supporter-chant')) {
-    root.querySelector('#supporter-chant').textContent = `“${club.club_slogan}”`;
-  }
-
-}
-
+// clubPage.js — builds a club page from the region data.
+// The page is assembled here in one module, so the old files in components/clubPage/ are no longer used.
+import {
+  allClubs, findClub, clubUrl, logoUrl, stadiumUrl, esc, honorsOf, COMPETITIONS,
+  parseRgb, rgbCss, accessibleAccent, readableOn, parseHistory, assignHonors,
+  initials, TRAITS, wireImages, mapCoordToPercent,
+} from './clubHelpers.js';
+import { storyTags, PEOPLES, CHAPTERS } from '../data/storyTags.js';
+import { renderNav, wireNav } from './siteNav.js';
+
+// The fixtures come from a game save, so "today" is the save date rather than the real date.
+const CURRENT_DATE = new Date(2025, 7, 22);
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+const SHORT = {
+  UCL: 'European Cup', VSL: 'League', TVC: 'Cup', VNN: 'National Liga', VHC: 'Heritage Cup',
+  VERL: 'East League', VNRL: 'North League', VSRL: 'South League', VWRL: 'West League',
+};
+
+const container = document.getElementById('club-container');
+document.getElementById('site-nav').innerHTML = renderNav('fa-clubs');
+wireNav();
+
+const clubNames = new Set(allClubs().map((e) => e.club.name));
 const params = new URLSearchParams(window.location.search);
-const clubName = params.get('club');
-const club = getClubDataByName(clubName);
+const wanted = params.get('club');
 
-if (club) {
-  renderClubPage(club).catch(err => {
-    document.getElementById('club-container').innerHTML = `<p class="text-red-500">Error loading club page.</p>`;
-    console.error(err);
+init();
+
+function init() {
+  const entry = wanted ? findClub(wanted) : null;
+  if (!entry) {
+    container.innerHTML = `<div class="cp-missing"><h1>No such club</h1>
+      <p>${wanted ? `Nobody in Velmora has heard of “${esc(wanted)}”.` : 'No club was named.'}</p>
+      <p><a href="clubs.html">Browse all clubs</a></p></div>`;
+    return;
+  }
+  document.title = `${entry.club.name} — Velmora`;
+  if (entry.club.name === 'The Vanished XI') renderFog(entry);
+  else renderClub(entry);
+  wireImages(container);
+  wireHero(container);
+}
+
+/* ---------- Small helpers ---------- */
+function stripQuotes(s) { return String(s || '').replace(/^[\s“"‘']+|[\s”"’']+$/g, ''); }
+function linkOrText(name, inner) { return clubNames.has(name) ? `<a href="${clubUrl(name)}">${inner}</a>` : inner; }
+
+function applyTheme(club) {
+  const colors = club.colors || [];
+  const primary = parseRgb(colors[0]);
+  const s = document.body.style;
+  s.setProperty('--club-primary', rgbCss(primary));
+  s.setProperty('--club-secondary', rgbCss(parseRgb(colors[1] || colors[0])));
+  s.setProperty('--club-accent', rgbCss(accessibleAccent(colors)));
+  s.setProperty('--on-primary', rgbCss(readableOn(primary)));
+}
+
+/* ---------- Page sections ---------- */
+function heroHtml(e) {
+  const c = e.club;
+  return `<header class="cp-hero">
+    <img class="cp-hero-img" src="${stadiumUrl(c.name)}" alt="" data-hide-on-error />
+    <div class="cp-hero-shade"></div>
+    <button type="button" class="cp-hero-toggle" aria-pressed="false" aria-label="Expand to show the full stadium image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+    </button>
+    <div class="cp-hero-inner">
+      <img class="cp-crest" src="${logoUrl(c.name)}" alt="Crest of ${esc(c.name)}" data-hide-on-error />
+      <div>
+        <p class="cp-crumbs"><a href="index.html">Velmora</a> / <a href="clubs.html?region=${e.regionId}">${esc(e.regionName)}</a> / <a href="clubs.html?city=${encodeURIComponent(e.city)}">${esc(e.city)}</a></p>
+        <h1>${esc(c.name)}</h1>
+        ${c.nickname ? `<p class="cp-nick">${esc(c.nickname)}</p>` : ''}
+        ${c.club_slogan ? `<p class="cp-slogan">“${esc(stripQuotes(c.club_slogan))}”</p>` : ''}
+      </div>
+    </div>
+  </header>`;
+}
+
+function swatchesHtml(colors) {
+  return `<div class="cp-swatches">${(colors || []).map((col) => `<span class="cp-swatch" style="background:${esc(col)}" title="${esc(col)}"></span>`).join('')}</div>`;
+}
+
+function factsHtml(e) {
+  const c = e.club;
+  const cap = c.stadium_details && c.stadium_details.max_attendance;
+  const cells = [];
+  cells.push(['Founded', c.founded != null ? esc(c.founded) : 'Unrecorded']);
+  if (c.competition_tier) cells.push(['League', `${esc(c.competition_tier)}${c.status ? `<small>${esc(c.status)}</small>` : ''}`]);
+  if (c.stadium) cells.push(['Ground', `${esc(c.stadium)}${cap ? `<small>Capacity ${Number(cap).toLocaleString('en-GB')}</small>` : ''}`]);
+  if (c.finances && c.finances.ownership_type) cells.push(['Ownership', esc(c.finances.ownership_type)]);
+  if (c.club_values && c.club_values.length) cells.push(['Creed', c.club_values.map((v) => esc(stripQuotes(v))).join('<br>')]);
+  if (c.colors && c.colors.length) cells.push(['Colours', swatchesHtml(c.colors)]);
+  if (c.supporter_objectives && Object.keys(c.supporter_objectives).length) {
+    const top = Object.entries(c.supporter_objectives)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([label]) => esc(stripQuotes(label)));
+    cells.push(['What fans want', top.join('<br>')]);
+  }
+  cells.push(['Home', `<a href="clubs.html?city=${encodeURIComponent(e.city)}">${esc(e.city)}</a><small>${esc(e.regionName)}</small>`]);
+  return `<dl class="cp-facts">${cells.map(([k, v]) => `<div class="cp-fact"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
+}
+
+function honorChip(code, year) {
+  return `<li class="cp-honor-chip" title="${esc(COMPETITIONS[code] || code)}, ${year}">
+    <img src="assets/competitions/${code}.png" alt="" data-hide-on-error /><span>${esc(SHORT[code] || code)} ${year}</span></li>`;
+}
+
+function timelineHtml(c) {
+  const eras = parseHistory(c.club_history);
+  if (!eras.length) return '';
+  const buckets = assignHonors(eras, honorsOf(c));
+  const nav = eras.length > 1
+    ? `<nav class="cp-era-nav" aria-label="Jump to an era">${eras.map((er, i) => `<a href="#era-${i}" title="${esc(er.title)}">${esc(er.rangeText.replace(/[()]/g, '') || er.title)}</a>`).join('')}</nav>`
+    : '';
+  const items = eras.map((er, i) => `<li class="cp-era" id="era-${i}">
+      ${er.title ? `<div class="cp-era-head"><h3>${esc(er.title)}</h3>${er.rangeText ? `<span class="cp-era-range">${esc(er.rangeText.replace(/[()]/g, ''))}</span>` : ''}</div>` : ''}
+      <div class="cp-era-body">${er.html}</div>
+      ${buckets[i].length ? `<ul class="cp-era-honors" aria-label="Trophies won in this era">${buckets[i].map((h) => honorChip(h.code, h.year)).join('')}</ul>` : ''}
+    </li>`).join('');
+  return `<section class="cp-story" aria-labelledby="story-h"><h2 id="story-h">The story</h2>${nav}<ol class="cp-timeline">${items}</ol></section>`;
+}
+
+function cabinetHtml(c) {
+  const honors = honorsOf(c);
+  const body = honors.length
+    ? `<ul class="cp-trophies">${honors.map((h) => `<li class="cp-trophy">
+        <div><img src="assets/trophies/${h.code}.png" alt="" data-hide-on-error /><span class="code">${h.code}</span></div>
+        <div><p class="name">${esc(h.name)}</p><p class="count">×${h.years.length}</p>
+        ${h.years.length > 8 ? `<details><summary>Show all ${h.years.length} years</summary><p class="years">${h.years.join(', ')}</p></details>` : `<p class="years">${h.years.join(', ')}</p>`}
+        </div></li>`).join('')}</ul>`
+    : '<p class="cp-muted">No major trophies yet.</p>';
+  return `<section class="cp-card" aria-labelledby="cab-h"><h2 id="cab-h">Trophy cabinet</h2>${body}</section>`;
+}
+
+function storyCardHtml(c) {
+  const t = storyTags[c.name];
+  if (!t) return '';
+  const p = PEOPLES[t.people] || PEOPLES.unknown;
+  const ch = CHAPTERS[t.chapter];
+  return `<section class="cp-card cp-storycard" aria-labelledby="story-card-h"><h2 id="story-card-h">In the story</h2>
+    <span class="cp-people-badge" style="background:${p.color}">${esc(p.label)}</span>
+    <p>${esc(t.note)}</p>
+    ${ch ? `<a class="cp-link" href="about.html#${t.chapter}">Read the chapter: ${esc(ch)}</a>` : ''}</section>`;
+}
+
+function mapHtml(e) {
+  const c = e.club;
+  if (!c.coord) return '';
+  const [x, y] = mapCoordToPercent(c.coord);
+  return `<section class="cp-card" aria-labelledby="map-h"><h2 id="map-h">Where in Velmora</h2>
+    <div class="cp-map"><img src="assets/vemora_map.png" alt="Map of Velmora with ${esc(c.name)} marked" loading="lazy" />
+    <span class="cp-pin" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" aria-hidden="true"></span></div>
+    <p class="cp-mapnote">${esc(e.city)}, ${esc(e.regionName)}. <a href="index.html" style="color:var(--amber)">Open the map</a></p></section>`;
+}
+
+function chip(entry) {
+  return `<li><a href="${clubUrl(entry.club.name)}"><img src="${logoUrl(entry.club.name)}" alt="" data-hide-on-error />${esc(entry.club.name)}</a></li>`;
+}
+function neighboursHtml(e) {
+  const all = allClubs().filter((x) => x.club.name !== e.club.name);
+  const sameCity = all.filter((x) => x.regionId === e.regionId && x.city === e.city);
+  const sameRegion = all.filter((x) => x.regionId === e.regionId && x.city !== e.city);
+  if (!sameCity.length && !sameRegion.length) return '';
+  return `<section class="cp-card" aria-labelledby="near-h"><h2 id="near-h">Nearby clubs</h2>
+    ${sameCity.length ? `<h3>Also in ${esc(e.city)}</h3><ul class="cp-chips">${sameCity.map(chip).join('')}</ul>` : ''}
+    ${sameRegion.length ? `<h3>Elsewhere in ${esc(e.regionName)}</h3><ul class="cp-chips">${sameRegion.slice(0, 8).map(chip).join('')}</ul>
+      <p class="cp-mapnote"><a href="clubs.html?region=${e.regionId}" style="color:var(--amber)">All ${sameRegion.length + sameCity.length + 1} clubs in the region</a></p>` : ''}
+  </section>`;
+}
+
+function legendsHtml(c) {
+  const a = c.players_alumni || {};
+  const groups = [['Legends', a.legends], ['Icons', a.icons]].filter(([, l]) => Array.isArray(l) && l.length);
+  if (!groups.length) return '';
+  return `<section class="cp-section" aria-labelledby="leg-h"><h2 id="leg-h">Legends and icons</h2>
+    ${groups.map(([title, list]) => `<h3 class="cp-group-title">${title}</h3><ul class="cp-legends">${list.map((p) => `<li class="cp-person">
+      <img src="assets/players/${encodeURIComponent(p.name)}.png" alt="" data-monogram="${esc(initials(p.name))}" />
+      <div><p class="n">${esc(p.name)}</p><p class="r">${esc(p.role || '')}</p></div></li>`).join('')}</ul>`).join('')}
+  </section>`;
+}
+
+function rivalryHtml(e) {
+  const c = e.club;
+  const derbies = c.derbies || [];
+  const rivals = c.rivals || [];
+  if (!derbies.length && !rivals.length) return '';
+  const derbyTeams = new Set(derbies.map((d) => d.team2));
+  const derbyCards = derbies.map((d) => `<article class="cp-derby">
+      <div class="cp-vs"><img src="${logoUrl(c.name)}" alt="" data-hide-on-error /><span>vs</span><img src="${logoUrl(d.team2)}" alt="" data-hide-on-error /></div>
+      <h3>${esc(d.name)}</h3>
+      <p>${esc(d.history || '')}</p>
+      ${linkOrText(d.team2, `<span class="cp-link" style="color:var(--amber)">${esc(d.team2)}</span>`)}
+    </article>`).join('');
+  const rivalCards = rivals.filter((r) => !derbyTeams.has(r.club)).map((r) => {
+    const inner = `<img src="${logoUrl(r.club)}" alt="" data-hide-on-error />
+      <div style="flex:1;min-width:0"><p class="n">${esc(r.club)}</p><p class="r">${esc(r.reason || '')} rivalry</p>
+      ${typeof r.level === 'number' ? `<span class="cp-meter" role="img" aria-label="Rivalry level ${r.level} of 100"><i style="width:${Math.max(0, Math.min(100, r.level))}%"></i></span>` : ''}</div>`;
+    return clubNames.has(r.club) ? `<li><a class="cp-rival" href="${clubUrl(r.club)}">${inner}</a></li>` : `<li><div class="cp-rival">${inner}</div></li>`;
+  }).join('');
+  return `<section class="cp-section" aria-labelledby="riv-h"><h2 id="riv-h">Derbies and rivalries</h2>
+    ${derbyCards ? `<div class="cp-derbies">${derbyCards}</div>` : ''}
+    ${rivalCards ? `<ul class="cp-rivals">${rivalCards}</ul>` : ''}</section>`;
+}
+
+function chantsHtml(c) {
+  const list = (c.chants || []).filter((x) => x && Array.isArray(x.lyrics) && x.lyrics.length);
+  if (!list.length) return '';
+  return `<section class="cp-section" aria-labelledby="ch-h"><h2 id="ch-h">From the terraces</h2>
+    <div class="cp-chants">${list.map((ch) => `<figure class="cp-chant"><figcaption>${esc(ch.title || 'Untitled')}</figcaption><p>${ch.lyrics.map(esc).join('\n')}</p></figure>`).join('')}</div></section>`;
+}
+
+function quotesHtml(c) {
+  const list = (c.supporter_quotes || []).filter((q) => q && q.text);
+  if (!list.length) return '';
+  return `<div class="cp-quotes">${list.map((q) => {
+    const long = q.text.length > 300;
+    const doc = /^recovered/i.test(q.author || '');
+    return `<blockquote class="cp-quote${long ? ' cp-quote--long' : ''}">
+      ${doc ? '<span class="cp-doc">Recovered document</span>' : ''}
+      <p>“${esc(q.text)}”</p><footer>— ${esc(q.author || 'Unrecorded')}</footer></blockquote>`;
+  }).join('')}</div>`;
+}
+
+function supportersHtml(c) {
+  const p = c.supporter_profile;
+  const traits = p ? Object.entries(p).filter(([k, v]) => TRAITS[k] && v > 0) : [];
+  const total = traits.reduce((a, [, v]) => a + v, 0);
+  const bar = traits.length
+    ? `<div class="cp-bar" role="img" aria-label="Supporter profile: ${traits.map(([k, v]) => `${TRAITS[k][0]} ${v}`).join(', ')}">${traits.map(([k, v]) => `<span style="width:${(v / total) * 100}%;background:${TRAITS[k][1]}"></span>`).join('')}</div>
+       <ul class="cp-bar-legend">${traits.map(([k, v]) => `<li><i style="background:${TRAITS[k][1]}"></i>${TRAITS[k][0]} ${v}</li>`).join('')}</ul>`
+    : '';
+  const fans = Array.isArray(c.fan_clubs) && c.fan_clubs.length
+    ? `<div class="cp-fanclubs"><h3 class="cp-group-title" style="margin-top:0">Fan clubs</h3><ul class="cp-chips">${c.fan_clubs.map((f) => `<li><span style="display:inline-block;padding:.3rem .8rem;font-size:.85rem;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px">${esc(f)}</span></li>`).join('')}</ul></div>`
+    : '';
+  const quotes = quotesHtml(c);
+  if (!bar && !fans && !quotes) return '';
+  return `<section class="cp-section" aria-labelledby="sup-h"><h2 id="sup-h">The supporters</h2>${bar}${fans}${quotes}</section>`;
+}
+
+function fixturesHtml(c) {
+  const list = c.schedule || [];
+  if (!list.length) return '';
+  let nextMarked = false;
+  const cards = list.map((m) => {
+    const d = new Date(m.date);
+    const played = !!m.score;
+    let cls = '', mid = 'vs';
+    if (played && typeof m.score === 'string' && m.score.includes('-')) {
+      const [h, a] = m.score.split('-').map((s) => parseInt(s.trim(), 10));
+      const won = m.home ? h > a : a > h;
+      cls = h === a ? 'draw' : won ? 'win' : 'loss';
+      mid = `${h} - ${a}`;
+    }
+    const upcoming = !played && d >= CURRENT_DATE;
+    const isNext = upcoming && !nextMarked;
+    if (isNext) nextMarked = true;
+    const mine = `<img src="${logoUrl(c.name)}" alt="${esc(c.name)}" data-hide-on-error />`;
+    const theirsImg = `<img src="${logoUrl(m.opponent)}" alt="${esc(m.opponent)}" data-hide-on-error />`;
+    const theirs = clubNames.has(m.opponent) ? `<a href="${clubUrl(m.opponent)}" title="${esc(m.opponent)}">${theirsImg}</a>` : theirsImg;
+    return `<li class="cp-match ${cls}${isNext ? ' next' : ''}" ${isNext ? 'data-next="true"' : ''} style="list-style:none">
+      ${isNext ? '<span class="tag">Next</span>' : ''}
+      <p class="date">${d.getDate()} ${MONTHS[d.getMonth()]}${m.home ? ', home' : ', away'}</p>
+      <div class="teams">${m.home ? mine : theirs}<span class="mid">${mid}</span>${m.home ? theirs : mine}</div>
+      ${m.tournament ? `<img class="comp" src="assets/competitions/${m.tournament}.png" alt="${esc(COMPETITIONS[m.tournament] || m.tournament)}" data-hide-on-error />` : ''}
+    </li>`;
+  }).join('');
+  return `<section class="cp-section" aria-labelledby="fix-h"><h2 id="fix-h">Fixtures</h2>
+    <p class="cp-sub">The 2025–26 season, as it stood when the save began.</p>
+    <div class="cp-fixtures-wrap">
+      <button type="button" class="cp-scroll-btn prev" aria-label="Earlier fixtures">‹</button>
+      <ul class="cp-fixtures" tabindex="0" aria-label="Fixture list" style="margin:0">${cards}</ul>
+      <button type="button" class="cp-scroll-btn next" aria-label="Later fixtures">›</button>
+    </div></section>`;
+}
+
+function kitsHtml(c) {
+  const k = c.kits;
+  if (!k || k.home_kit_svg == null) return '';
+  const types = [['home', 'Home'], ['away', 'Away']];
+  if (k.third) types.push(['third', 'Third']);
+  return `<section class="cp-section" aria-labelledby="kit-h"><h2 id="kit-h">Kits</h2>
+    <div class="cp-kits">${types.map(([t, label]) => `<figure class="cp-kit" style="margin:0">
+      <div class="cp-kit-face" id="kit-${t}" role="button" tabindex="0" aria-label="Turn the ${label.toLowerCase()} kit over">
+        <div id="kit-${t}-front"></div><div id="kit-${t}-back" class="hidden"></div></div>
+      <p>${label} kit</p></figure>`).join('')}</div>
+    <p class="cp-hint">Hover, tap, or press Enter to turn a kit over.</p></section>`;
+}
+
+async function hydrateKits(club) {
+  const k = club.kits;
+  if (!k || k.home_kit_svg == null) return;
+  async function loadSvg(id, path) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    try {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(path);
+      el.innerHTML = await res.text();
+    } catch (err) { console.error('Kit failed to load:', err); }
+  }
+  function setColors(id, colors) {
+    const el = document.getElementById(id);
+    if (!el || !colors) return;
+    ['primary', 'secondary', 'accent', 'number'].forEach((n, i) => {
+      if (colors[i]) el.style.setProperty(`--kit-${n}-color`, `rgb(${colors[i][0]}, ${colors[i][1]}, ${colors[i][2]})`);
+    });
+  }
+  async function show(type) {
+    const colors = k[type];
+    await loadSvg(`kit-${type}-front`, `assets/kits/${k[`${type}_kit_svg`]}.svg`);
+    setColors(`kit-${type}-front`, colors);
+    const backType = k[`${type}_back`];
+    if (backType === 'same_as_front') {
+      const svg = document.querySelector(`#kit-${type}-front svg`);
+      const back = document.getElementById(`kit-${type}-back`);
+      if (svg && back) { back.innerHTML = ''; back.appendChild(svg.cloneNode(true)); }
+    } else if (backType) {
+      await loadSvg(`kit-${type}-back`, `assets/kits/backs/${backType}.svg`);
+    }
+    setColors(`kit-${type}-back`, colors);
+    wireFlip(type);
+  }
+  function wireFlip(type) {
+    const face = document.getElementById(`kit-${type}`);
+    const front = document.getElementById(`kit-${type}-front`);
+    const back = document.getElementById(`kit-${type}-back`);
+    if (!face || !front || !back) return;
+    const flip = (toBack) => { front.classList.toggle('hidden', toBack); back.classList.toggle('hidden', !toBack); };
+    face.addEventListener('mouseenter', () => flip(true));
+    face.addEventListener('mouseleave', () => flip(false));
+    face.addEventListener('click', () => flip(front.classList.contains('hidden') ? false : true));
+    face.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); flip(!front.classList.contains('hidden')); } });
+  }
+  await show('home');
+  await show('away');
+  if (k.third) {
+    await loadSvg('kit-third-front', k.third);
+    const back = document.getElementById('kit-third-back');
+    if (back) back.remove();
+  }
+}
+
+// The hero's stadium photo is cropped to a fixed height by default. The
+// toggle button swaps the hero to the image's true aspect ratio, so the
+// whole photo shows without cropping, then swaps it back.
+const HERO_EXPAND_ICON = `<polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>`;
+const HERO_COLLAPSE_ICON = `<polyline points="9 3 3 3 3 9"></polyline><polyline points="15 21 21 21 21 15"></polyline><line x1="3" y1="3" x2="10" y2="10"></line><line x1="21" y1="21" x2="14" y2="14"></line>`;
+
+function wireHero(root) {
+  const hero = root.querySelector('.cp-hero');
+  const btn = root.querySelector('.cp-hero-toggle');
+  const img = root.querySelector('.cp-hero-img');
+  const svgPaths = btn && btn.querySelector('svg');
+  if (!hero || !btn || !img || !svgPaths) return;
+
+  const hideBtn = () => { btn.style.display = 'none'; };
+  const alreadyFailed = img.complete && img.naturalWidth === 0 && !!img.getAttribute('src');
+  if (alreadyFailed) hideBtn(); else img.addEventListener('error', hideBtn, { once: true });
+
+  function setRatio() {
+    if (img.naturalWidth && img.naturalHeight) {
+      hero.style.setProperty('--hero-ar', (img.naturalWidth / img.naturalHeight).toFixed(4));
+    }
+  }
+  if (img.complete && img.naturalWidth) setRatio(); else img.addEventListener('load', setRatio, { once: true });
+
+  btn.addEventListener('click', () => {
+    const expanded = hero.classList.toggle('cp-hero--expanded');
+    btn.setAttribute('aria-pressed', String(expanded));
+    btn.setAttribute('aria-label', expanded ? 'Collapse the hero image' : 'Expand to show the full stadium image');
+    svgPaths.innerHTML = expanded ? HERO_COLLAPSE_ICON : HERO_EXPAND_ICON;
   });
-} else {
-  document.getElementById('club-container').innerHTML = `<p class="text-red-500">Club not found.</p>`;
+}
+
+function wireFixtures(root) {
+  const strip = root.querySelector('.cp-fixtures');
+  if (!strip) return;
+  const next = strip.querySelector('[data-next="true"]');
+  if (next) strip.scrollLeft = Math.max(0, next.offsetLeft - strip.clientWidth / 2 + next.offsetWidth / 2);
+  root.querySelector('.cp-scroll-btn.prev')?.addEventListener('click', () => strip.scrollBy({ left: -240, behavior: 'smooth' }));
+  root.querySelector('.cp-scroll-btn.next')?.addEventListener('click', () => strip.scrollBy({ left: 240, behavior: 'smooth' }));
+}
+
+// On small screens the story becomes a horizontal swipe strip, one era per
+// screen, with the existing era-nav pills doubling as a jump strip and a
+// prev/next pager appended to each era. Desktop keeps the plain vertical
+// timeline untouched.
+function wireStoryTimeline(root) {
+  const timeline = root.querySelector('.cp-timeline');
+  const eras = timeline ? Array.from(timeline.querySelectorAll('.cp-era')) : [];
+  const navLinks = Array.from(root.querySelectorAll('.cp-era-nav a'));
+  if (!timeline || eras.length < 2) return;
+
+  const small = window.matchMedia('(max-width: 767px)');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = 0;
+
+  function mark(i) {
+    current = i;
+    navLinks.forEach((a, n) => a.classList.toggle('is-current', n === i));
+    // Keep the active pill visible within the (now scrollbar-less) nav strip
+    // as the reader scrolls/swipes through eras — otherwise the highlighted
+    // pill can end up scrolled out of view with nothing on screen showing
+    // which era is current.
+    const link = navLinks[i];
+    if (link) link.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+  }
+  function go(i) {
+    i = Math.max(0, Math.min(eras.length - 1, i));
+    mark(i);
+    timeline.scrollTo({ left: eras[i].offsetLeft, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  navLinks.forEach((a, i) => {
+    a.addEventListener('click', (ev) => {
+      if (!small.matches) return;
+      ev.preventDefault();
+      go(i);
+    });
+  });
+
+  // Desktop: the timeline is a plain vertical list (not the horizontal strip
+  // below), so nothing here ever fires the 'scroll' listener further down —
+  // the nav pill for era 0 stayed marked "current" forever regardless of
+  // where the reader had actually scrolled to. This mirrors about.js's
+  // chapter-rail scroll-spy: whichever era is in the "reading band" of the
+  // viewport (25% down from the top, before the bottom 65%) gets marked.
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (small.matches) return;
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const i = eras.indexOf(entry.target);
+        if (i !== -1) mark(i);
+      });
+    }, { rootMargin: '-25% 0px -65% 0px' });
+    eras.forEach((era) => observer.observe(era));
+  }
+
+  eras.forEach((era, i) => {
+    const pager = document.createElement('div');
+    pager.className = 'cp-era-pager';
+    [[i - 1, 'prev'], [i + 1, 'next']].forEach(([target, dir]) => {
+      if (target < 0 || target >= eras.length) return;
+      const label = eras[target].querySelector('.cp-era-head h3');
+      const name = label ? label.textContent : (dir === 'prev' ? 'Previous era' : 'Next era');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cp-era-pager-btn';
+      btn.dataset.dir = dir;
+      btn.textContent = dir === 'prev' ? `← ${name}` : `${name} →`;
+      btn.addEventListener('click', () => go(target));
+      pager.appendChild(btn);
+    });
+    era.appendChild(pager);
+  });
+
+  timeline.addEventListener('scroll', () => {
+    if (!small.matches) return;
+    const step = eras.length > 1 ? eras[1].offsetLeft - eras[0].offsetLeft : timeline.clientWidth;
+    if (!step) return;
+    const i = Math.round(timeline.scrollLeft / step);
+    if (i !== current && i >= 0 && i < eras.length) mark(i);
+  }, { passive: true });
+
+  mark(0);
+}
+
+/* ---------- The ordinary club page ---------- */
+function renderClub(e) {
+  const c = e.club;
+  applyTheme(c);
+  container.innerHTML = `
+    ${heroHtml(e)}
+    ${factsHtml(e)}
+    <div class="cp-grid">
+      <div class="cp-main">${timelineHtml(c) || '<p class="cp-muted">This club\'s story has not been written yet.</p>'}</div>
+      <aside class="cp-aside" aria-label="About the club">
+        ${storyCardHtml(c)}
+        ${cabinetHtml(c)}
+        ${mapHtml(e)}
+        ${neighboursHtml(e)}
+      </aside>
+    </div>
+    ${legendsHtml(c)}
+    ${rivalryHtml(e)}
+    ${chantsHtml(c)}
+    ${supportersHtml(c)}
+    ${fixturesHtml(c)}
+    ${kitsHtml(c)}`;
+  wireFixtures(container);
+  wireStoryTimeline(container);
+  hydrateKits(c);
+}
+
+/* ---------- The Vanished XI ---------- */
+function renderFog(e) {
+  const c = e.club;
+  document.body.classList.add('fog-page');
+  document.title = 'The Vanished XI';
+  container.innerHTML = `
+    <div class="fog-shell">
+      <div class="fog-layer" aria-hidden="true"></div><div class="fog-layer two" aria-hidden="true"></div>
+      <div class="fog-content">
+        <header class="fog-hero">
+          <img src="${logoUrl(c.name)}" alt="The badge of the Vanished XI, with runes nobody has translated" data-hide-on-error />
+          <h1>${esc(c.name)}</h1>
+          <p class="cp-nick">${esc(c.nickname || '')}</p>
+          <p class="cp-slogan">${esc(stripQuotes(c.club_slogan || ''))}</p>
+          <div class="eleven" aria-hidden="true">${'<span></span>'.repeat(11)}</div>
+          <p class="fog-caption">Always the same, and never the same.</p>
+        </header>
+        <div class="fog-unrecorded"><dl class="cp-facts">
+          <div class="cp-fact"><dt>Founded</dt><dd>Unrecorded</dd></div>
+          <div class="cp-fact"><dt>Ground</dt><dd>None</dd></div>
+          <div class="cp-fact"><dt>Fixtures</dt><dd>None</dd></div>
+          <div class="cp-fact"><dt>Colours</dt><dd>${swatchesHtml(c.colors)}</dd></div>
+        </dl></div>
+        <div class="fog-narrow">${timelineHtml(c)}</div>
+        <div class="fog-narrow"><div class="cp-aside" style="position:static">${storyCardHtml(c)}</div>
+          <p class="cp-muted" style="margin-top:1rem">The tape mentioned in these reports is told from the other side on the page of <a href="${clubUrl('Valdren Atletika')}" style="color:var(--amber)">Valdren Atletika</a>.</p></div>
+        <section class="fog-narrow" aria-labelledby="fog-voices"><h2 id="fog-voices" style="font-family:'Cinzel',serif;color:#e8f1f3;font-size:1.5rem;margin:0 0 1rem">Voices</h2>${quotesHtml(c)}</section>
+      </div>
+    </div>`;
+  wireStoryTimeline(container);
 }

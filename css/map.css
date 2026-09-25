@@ -1,0 +1,188 @@
+/* Map page (index.html). Region-specific colours are set once below and reused
+   for hover, active and the details-panel accent bar, so the map and the
+   panel always agree on "this region's colour". */
+
+:root {
+  --map-central: rgb(248, 190, 54);
+  --map-highlands: rgb(230, 239, 240);
+  --map-lakes: rgb(81, 158, 204);
+  --map-reaches: rgb(110, 152, 68);
+  --map-plateau: rgb(157, 113, 76);
+  --map-bay: rgb(148, 163, 184);
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ---------- Map ---------- */
+/* Keeps the map in view while the (often much taller) details panel scrolls
+   beside it, instead of the map scrolling away with the rest of the page.
+   Standard CSS-grid sticky-sidebar trick: align-self:start stops the item
+   stretching to the row's full height, which is what gives sticky room to
+   travel before it "releases" at the bottom of the row. Only applies at the
+   lg breakpoint, where the two columns actually sit side by side. */
+@media (min-width: 1024px) {
+  .map-col { position: sticky; top: 1.25rem; align-self: start; }
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  background-color: #1a2a40;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.map-region {
+  cursor: pointer;
+  transition: fill 0.3s ease-in-out, stroke 0.3s ease, opacity 0.3s ease;
+  fill: rgba(255, 255, 255, 0.1);
+  outline: none; /* clicking also focuses the <path>; the browser's default
+    rectangular focus box was flashing around the region's bounding box on
+    every click. Keyboard users still get a visible ring via :focus-visible. */
+}
+.map-region:focus-visible { outline: none; stroke: #fbbf24; stroke-width: 2.5; }
+
+/* Region hover colours */
+#central-velmora:hover { fill: color-mix(in srgb, var(--map-central) 40%, transparent); }
+#northern-highlands:hover { fill: color-mix(in srgb, var(--map-highlands) 40%, transparent); }
+#southern-lakes:hover { fill: color-mix(in srgb, var(--map-lakes) 40%, transparent); }
+#eastern-reaches:hover { fill: color-mix(in srgb, var(--map-reaches) 40%, transparent); }
+#western-plateau:hover { fill: color-mix(in srgb, var(--map-plateau) 40%, transparent); }
+
+/* Selected region: gold outline + a stronger tint of its own colour.
+   (Fix: previously ".map-region.active" was never applied by the JS, and the
+   per-region rule used a descendant selector though id and class live on the
+   same <path> — both are corrected here.) */
+.map-region.active { stroke: #ffd700; stroke-width: 2; }
+#central-velmora.active { fill: color-mix(in srgb, var(--map-central) 55%, transparent); }
+#northern-highlands.active { fill: color-mix(in srgb, var(--map-highlands) 55%, transparent); }
+#southern-lakes.active { fill: color-mix(in srgb, var(--map-lakes) 55%, transparent); }
+#eastern-reaches.active { fill: color-mix(in srgb, var(--map-reaches) 55%, transparent); }
+#western-plateau.active { fill: color-mix(in srgb, var(--map-plateau) 55%, transparent); }
+
+/* Fix: dimmed regions used to swallow the hover colour via !important, so a
+   second click anywhere else on the map gave zero visual feedback. A lighter,
+   still-!important dimmed-hover state keeps regions readable as "click me"
+   without undoing the dimming. */
+.map-region.dimmed { fill: rgba(0, 0, 0, 0.75) !important; opacity: 0.85; }
+.map-region.dimmed:hover,
+.map-region.dimmed:focus-visible { fill: rgba(255, 255, 255, 0.18) !important; opacity: 1; }
+
+.club-marker {
+  pointer-events: auto;
+  cursor: pointer;
+  stroke: white;
+  stroke-width: .75;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .65));
+  transition: opacity 0.35s ease, transform 0.35s ease, filter .2s ease;
+}
+.club-marker:hover,
+.club-marker:focus-visible {
+  stroke: #FFD700;
+  stroke-width: 1.25;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .8));
+}
+
+/* ---------- Region legend / quick-jump ---------- */
+/* Doubles as a discoverability aid (first-time visitors can't always tell the
+   regions apart at a glance) and as the only way into Northern Bay, which has
+   no path on the map itself -- fitting, since "it is not drawn on most maps",
+   but it still needs a way in. */
+.map-legend { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.map-legend-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .4rem .8rem; font-size: .82rem; color: #dbe6ec;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px; cursor: pointer; transition: border-color .2s, color .2s, background .2s;
+}
+.map-legend-btn .dot { width: .6rem; height: .6rem; border-radius: 50%; flex-shrink: 0; }
+.map-legend-btn:hover { color: #fff; border-color: #fbbf24; }
+.map-legend-btn:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+.map-legend-btn[aria-pressed="true"] { color: #fff; background: rgba(251,191,36,.12); border-color: #fbbf24; }
+.map-legend-btn.is-mystery .dot { background: var(--map-bay); box-shadow: 0 0 6px var(--map-bay); }
+
+/* ---------- Details panel ---------- */
+#region-details-panel-placeholder { position: relative; }
+.rp-accent { width: 3.5rem; height: 3px; border-radius: 999px; margin: .85rem 0 1.1rem; background: #fbbf24; transition: background .3s ease; }
+
+.rp-eyebrow { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: #8b97a3; margin: 0 0 .3rem; }
+/* #region-name is focused programmatically (not clicked) purely so screen
+   readers announce the region change; no visible ring needed for that. */
+#region-name:focus { outline: none; }
+
+.rp-clear {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .78rem; color: #9ca3af; background: none; border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px; padding: .3rem .7rem; cursor: pointer; margin-top: 1rem;
+  transition: color .2s, border-color .2s;
+}
+.rp-clear:hover { color: #fff; border-color: #fbbf24; }
+.rp-clear:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+
+/* Empty state */
+.rp-empty { text-align: center; padding: 1rem 0 .25rem; }
+.rp-empty svg { width: 3rem; height: 3rem; color: #fbbf24; opacity: .8; margin: 0 auto .75rem; display: block; }
+.rp-hint-list { list-style: none; margin: 1.1rem 0 0; padding: 0; display: grid; gap: .5rem; text-align: left; font-size: .85rem; color: #9ca3af; }
+.rp-hint-list li { display: flex; gap: .5rem; align-items: flex-start; }
+.rp-hint-list li::before { content: "›"; color: #fbbf24; font-weight: 700; }
+
+/* ---------- Cities & clubs ---------- */
+.rp-city {
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: .6rem;
+  overflow: hidden;
+}
+.rp-city > summary {
+  cursor: pointer; list-style: none; padding: .85rem 1rem;
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+}
+.rp-city > summary::-webkit-details-marker { display: none; }
+.rp-city > summary:focus-visible { outline: 2px solid #fbbf24; outline-offset: -2px; }
+.rp-city-name { font-family: 'Cinzel', serif; font-weight: 600; color: #fcd34d; font-size: 1.05rem; }
+.rp-city-weather {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .78rem; color: #9ca3af; font-style: italic; text-align: right;
+}
+.rp-city-weather .ico { flex-shrink: 0; opacity: .8; }
+.rp-city-chevron { flex-shrink: 0; color: #6b7280; transition: transform .25s ease; }
+.rp-city[open] .rp-city-chevron { transform: rotate(180deg); }
+.rp-city-body { padding: 0 1rem 1rem; display: flex; flex-direction: column; gap: 1rem; }
+
+/* ---------- Club cards ----------
+   Uses the same --club-primary/--club-secondary/--club-accent/--on-primary
+   custom properties clubPage.js sets on <body>, except here each .rp-club
+   sets its own copy inline (js/mapUI.js), since several clubs render at once. */
+.rp-club {
+  position: relative;
+  background:
+    linear-gradient(100deg, color-mix(in srgb, var(--club-primary) 24%, transparent), transparent 60%),
+    var(--card, rgba(255,255,255,.045));
+  border: 1px solid var(--line, rgba(255,255,255,.11));
+  border-left: 3px solid var(--club-accent, #fbbf24);
+  border-radius: .55rem;
+  padding: .95rem 1rem;
+  display: flex; flex-direction: column; gap: .7rem;
+  transition: transform .2s ease, border-color .2s ease;
+}
+@media (prefers-reduced-motion: no-preference) { .rp-club:hover { transform: translateY(-2px); } }
+.rp-club-top { display: flex; gap: .75rem; }
+.rp-club-crest { width: 3rem; height: 3rem; object-fit: contain; background: rgba(255,255,255,.08); border-radius: .35rem; flex-shrink: 0; }
+.rp-club-name { font-weight: 700; color: var(--club-accent, #fde68a); text-decoration: none; font-size: 1rem; }
+.rp-club-name:hover { text-decoration: underline; }
+.rp-club-nick { color: #9ca3af; font-size: .85rem; font-style: italic; margin: .1rem 0 0; }
+.rp-club-facts { margin-left: auto; text-align: right; font-size: .8rem; color: #b6c2cc; display: flex; flex-direction: column; gap: .15rem; flex-shrink: 0; }
+.rp-hashtag { color: #7dd3fc; }
+.rp-club-honors { display: flex; flex-wrap: wrap; gap: .45rem; }
+.rp-honor { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .55rem; font-size: .74rem; color: #dbe6ec; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 999px; }
+/* Kit images are only ever written to the DOM when the data actually has a
+   home/away kit (js/mapUI.js); data-hide-on-error also collapses any single
+   kit image that 404s, rather than leaving a broken-image icon. */
+.rp-kits { display: flex; gap: .4rem; }
+.rp-kits img { height: 2.75rem; }
+.rp-subhead { font-size: .74rem; letter-spacing: .05em; text-transform: uppercase; color: #9ca3af; margin: 0 0 .4rem; }
+
+.rp-rivals { display: flex; flex-wrap: wrap; gap: .5rem; }
+.rp-rival-ring { display: inline-flex; border-radius: 999px; }
+.rp-rival-ring img, .rp-rival-ring .cp-mono { height: 2.1rem; width: 2.1rem; font-size: .7rem; }
+.rp-rival-ring img { border-radius: 999px; object-fit: contain; background: rgba(255,255,255,.08); padding: .1rem; }

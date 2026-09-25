@@ -1,0 +1,359 @@
+/* Club page, club directory, honours and derbies.
+   Club colours arrive as CSS variables set by clubPage.js:
+   --club-primary, --club-secondary, --club-accent (a colour checked for contrast on the dark page), --on-primary. */
+
+:root {
+  --bg: #0d1828;
+  --card: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.11);
+  --text: #dbe6ec;
+  --muted: #8b97a3;
+  --amber: #fbbf24;
+  --velmar: #7db8e8;
+  --kovarai: #e8935f;
+  --club-primary: rgb(30, 58, 138);
+  --club-secondary: rgb(251, 191, 36);
+  --club-accent: rgb(251, 191, 36);
+  --on-primary: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body.club-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Lato', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1100px 480px at 50% -80px, color-mix(in srgb, var(--club-primary) 32%, transparent), transparent 70%),
+    var(--bg);
+}
+
+.cp-shell { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.cp-shell a { color: inherit; }
+.cp-shell :focus-visible { outline: 2px solid var(--club-accent); outline-offset: 3px; border-radius: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Hero ---------- */
+.cp-hero { position: relative; overflow: hidden; border-radius: .75rem; min-height: 19rem; display: flex; align-items: flex-end; background: linear-gradient(135deg, color-mix(in srgb, var(--club-primary) 60%, #0b1320), #0b1320); border: 1px solid var(--line); }
+.cp-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+.cp-hero-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,14,24,.15) 0%, rgba(8,14,24,.88) 100%); }
+.cp-hero-inner { position: relative; display: flex; gap: 1.5rem; align-items: flex-end; padding: 1.75rem; width: 100%; }
+.cp-crest { width: 6.5rem; height: 6.5rem; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 6px 14px rgba(0,0,0,.55)); }
+.cp-crumbs { font-size: .8rem; color: rgba(255,255,255,.7); margin: 0 0 .35rem; }
+.cp-crumbs a { text-decoration: none; }
+.cp-crumbs a:hover { color: var(--club-accent); text-decoration: underline; }
+.cp-hero h1 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.9rem, 4.5vw, 3rem); line-height: 1.05; color: #fff; margin: 0; }
+.cp-nick { margin: .4rem 0 0; font-style: italic; color: var(--club-accent); font-size: 1.05rem; }
+.cp-slogan { margin: .35rem 0 0; color: rgba(255,255,255,.78); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem; }
+@media (max-width: 640px) { .cp-hero-inner { flex-direction: column; align-items: flex-start; } .cp-crest { width: 5rem; height: 5rem; } }
+
+.cp-hero-toggle {
+  position: absolute; top: .85rem; right: .85rem; z-index: 3;
+  width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
+  background: rgba(8,14,24,.55); border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+  color: #fff; cursor: pointer; transition: background .2s, border-color .2s;
+}
+.cp-hero-toggle:hover { background: rgba(8,14,24,.75); border-color: var(--club-accent); }
+.cp-hero-toggle svg { width: 1.1rem; height: 1.1rem; }
+.cp-hero--expanded { min-height: 0; aspect-ratio: var(--hero-ar, 16 / 9); }
+.cp-hero--expanded .cp-hero-img { opacity: .85; }
+.cp-hero--expanded .cp-hero-shade { background: linear-gradient(180deg, rgba(8,14,24,.05) 0%, rgba(8,14,24,.8) 100%); }
+
+/* ---------- Facts strip ---------- */
+.cp-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 1.25rem 0 2rem; background: var(--line); border: 1px solid var(--line); border-radius: .6rem; overflow: hidden; }
+@media (min-width: 720px) { .cp-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cp-fact { background: #101d31; padding: .9rem 1rem; min-width: 0; }
+.cp-fact dt { font-size: .72rem; color: var(--muted); margin-bottom: .2rem; }
+.cp-fact dd { margin: 0; color: #fff; font-size: .95rem; line-height: 1.35; overflow-wrap: anywhere; }
+.cp-fact dd small { display: block; color: var(--muted); font-size: .78rem; }
+.cp-swatches { display: flex; gap: .4rem; }
+.cp-swatch { width: 1.4rem; height: 1.4rem; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); }
+
+/* ---------- Layout ---------- */
+.cp-grid { display: grid; gap: 2.5rem; min-width: 0; }
+/* Grid items default to min-width: auto, which lets their content (chiefly the map
+   image in .cp-aside) refuse to shrink below its intrinsic size and force the whole
+   column — Story, Trophy Cabinet, Where in Velmora, Nearby Clubs alike — wider than
+   the screen on mobile. min-width: 0 here is what makes them actually responsive. */
+.cp-grid > * { min-width: 0; }
+@media (min-width: 1024px) { .cp-grid { grid-template-columns: minmax(0, 1fr) 19.5rem; } .cp-aside { position: sticky; top: 1.5rem; align-self: start; } }
+.cp-aside { display: grid; gap: 1.25rem; min-width: 0; }
+.cp-card { background: var(--card); border: 1px solid var(--line); border-radius: .6rem; padding: 1.1rem 1.15rem; }
+.cp-card h2, .cp-section h2, .cp-story h2 { font-family: 'Cinzel', serif; font-weight: 600; color: #fff; font-size: 1.15rem; margin: 0 0 .9rem; }
+.cp-section { margin-top: 3.5rem; }
+.cp-section > h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
+.cp-section > .cp-sub { color: var(--muted); font-size: .9rem; margin: -.8rem 0 1.25rem; }
+
+/* ---------- Story timeline ---------- */
+.cp-story > h2 { font-size: 1.5rem; }
+.cp-era-nav { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .6rem; margin: 0 0 1.75rem; scrollbar-width: none; -ms-overflow-style: none; }
+.cp-era-nav::-webkit-scrollbar { display: none; }
+.cp-era-nav a { flex: 0 0 auto; padding: .3rem .8rem; font-size: .8rem; color: #b6c2cc; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; white-space: nowrap; transition: border-color .2s, color .2s; }
+.cp-era-nav a:hover { color: #fff; border-color: var(--club-accent); }
+.cp-era-nav a.is-current { color: #fff; border-color: var(--club-accent); background: color-mix(in srgb, var(--club-accent) 16%, transparent); }
+/* Pinned near the top of the viewport while the (much taller) timeline
+   scrolls past beside it, so the reader always has a jump-back point and can
+   see, via .is-current above, which era they're currently reading. */
+@media (min-width: 1024px) {
+  .cp-era-nav {
+    position: sticky; top: 0; z-index: 10; background: var(--bg);
+    padding-top: .6rem; margin: -0.6rem 0 1.15rem; border-bottom: 1px solid var(--line);
+  }
+}
+.cp-timeline { list-style: none; margin: 0; padding: 0 0 0 1.6rem; border-left: 2px solid color-mix(in srgb, var(--club-accent) 45%, transparent); }
+.cp-era { position: relative; padding-bottom: 2.75rem; scroll-margin-top: 1.5rem; }
+.cp-era:last-child { padding-bottom: 0; }
+.cp-era::before { content: ""; position: absolute; left: calc(-1.6rem - 7px); top: .55rem; width: 12px; height: 12px; border-radius: 50%; background: var(--club-accent); box-shadow: 0 0 0 4px var(--bg); }
+.cp-era-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .9rem; margin-bottom: .75rem; }
+.cp-era-head h3 { font-family: 'Cinzel', serif; font-weight: 600; font-size: 1.3rem; line-height: 1.2; color: #fff; margin: 0; }
+.cp-era-range { color: var(--club-accent); font-size: .9rem; }
+.cp-era-body p { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.25rem; line-height: 1.7; color: var(--text); max-width: 40rem; margin: 0 0 1.1em; }
+.cp-era-body .hl { color: var(--club-accent); font-weight: 700; }
+.cp-era-body em { color: #f1f5f8; }
+.cp-era-honors { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: .4rem 0 0; padding: 0; }
+
+/* The prev/next pager is only meaningful for the small-screen swipe strip
+   below; it's hidden by default so medium/large screens (where the
+   timeline is a plain vertical list) never show it. */
+.cp-era-pager { display: none; }
+
+/* ---------- Story timeline: swipe strip on small screens ---------- */
+@media (max-width: 1024px) {
+  .cp-era-nav {
+    position: sticky; top: 0; z-index: 10; background: var(--bg);
+    margin: 0 -1rem 1.25rem; padding: .6rem 1rem; border-bottom: 1px solid var(--line);
+  }
+  .js .cp-timeline {
+    display: flex; align-items: flex-start; gap: 1.5rem;
+    list-style: none; margin: 0; padding: 0; border-left: 0;
+    overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .js .cp-timeline::-webkit-scrollbar { display: none; }
+  .js .cp-era {
+    flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always;
+    padding-bottom: 1.5rem;
+  }
+  .js .cp-era::before { display: none; }
+  /* .cp-era-body p { max-width: none; } */
+  .js .cp-era-pager {
+    display: flex; gap: .75rem; margin-top: .5rem; padding-top: 1rem; border-top: 1px solid var(--line);
+  }
+  .cp-era-pager-btn {
+    flex: 1 1 42%; text-align: left; padding: .6rem .85rem;
+    border: 1px solid var(--line); border-radius: .375rem; background: transparent;
+    color: #cbd5df; font-size: .8rem; line-height: 1.3; cursor: pointer;
+  }
+  .cp-era-pager-btn:hover { border-color: var(--club-accent); color: #fff; }
+  .cp-era-pager-btn[data-dir="next"] { text-align: right; margin-left: auto; }
+}
+.cp-honor-chip { display: inline-flex; align-items: center; gap: .4rem; padding: .2rem .65rem .2rem .3rem; font-size: .78rem; color: #dbe6ec; background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px; }
+.cp-honor-chip img { height: 1.6rem; width: auto; object-fit: contain; }
+
+/* ---------- Trophy cabinet ---------- */
+.cp-trophies { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.cp-trophy { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); gap: .9rem; align-items: start; }
+.cp-trophy img { width: 3.4rem; height: 4.6rem; object-fit: contain; }
+.cp-trophy .code { display: none; width: 3.4rem; height: 4.6rem; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: .4rem; font-size: .8rem; color: var(--muted); }
+.cp-trophy .name { color: #fff; font-size: .9rem; font-weight: 700; margin: 0; }
+.cp-trophy .count { margin: 0; color: var(--club-accent); font-size: 1.15rem; font-weight: 700; }
+.cp-trophy .years { margin: .15rem 0 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.cp-trophy summary { cursor: pointer; color: var(--muted); font-size: .78rem; }
+.cp-muted { color: var(--muted); font-size: .9rem; margin: 0; }
+
+/* ---------- Story card and neighbours ---------- */
+.cp-people-badge { display: inline-block; padding: .15rem .65rem; border-radius: 999px; font-size: .78rem; font-weight: 700; color: #0b1320; }
+.cp-storycard p { margin: .7rem 0 0; font-size: .92rem; line-height: 1.55; }
+.cp-storycard a.cp-link { display: inline-block; margin-top: .8rem; font-size: .88rem; color: var(--amber); text-decoration: none; }
+.cp-storycard a.cp-link:hover { text-decoration: underline; }
+/* Below the 1024px breakpoint the sidebar isn't pinned to 19.5rem yet (see
+   .cp-grid), so this card runs the full width of the stacked column. On
+   phones that column is narrow anyway, but on tablets/small laptops it
+   stretches into a huge locator map. Cap it and center it so it reads as
+   a small "you are here" thumbnail at every width, not just inside the
+   fixed-width desktop sidebar. */
+.cp-map { position: relative; max-width: 26rem; margin: 0 auto; border-radius: .4rem; overflow: hidden; border: 1px solid var(--line); }
+.cp-map img { display: block; width: 100%; height: auto; }
+@media (min-width: 1024px) { .cp-map { max-width: none; margin: 0; } }
+.cp-pin { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--club-accent); border: 2px solid #fff; transform: translate(-50%, -50%); box-shadow: 0 0 0 5px rgba(255,255,255,.22); }
+.cp-mapnote { margin: .6rem 0 0; color: var(--muted); font-size: .8rem; }
+.cp-chips { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; margin: 0; padding: 0; }
+.cp-chips a, .cp-chips span { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .7rem .25rem .3rem; font-size: .8rem; color: #dbe6ec; text-decoration: none; background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px; }
+.cp-chips a:hover { border-color: var(--club-accent); color: #fff; }
+.cp-chips img { height: 1.5rem; width: 1.5rem; object-fit: contain; }
+.cp-card h3 { font-size: .8rem; color: var(--muted); font-weight: 400; margin: 1rem 0 .5rem; }
+
+/* ---------- Legends ---------- */
+.cp-group-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--club-accent); margin: 1.5rem 0 .8rem; font-weight: 600; }
+.cp-legends { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: .8rem; }
+.cp-person { display: flex; gap: .8rem; align-items: center; padding: .7rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; }
+.cp-person img, .cp-mono { width: 3.4rem; height: 3.4rem; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
+.cp-mono { display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; color: var(--on-primary); background: var(--club-primary); border: 2px solid var(--club-accent); }
+.cp-person .n { margin: 0; color: #fff; font-size: .92rem; font-weight: 700; line-height: 1.25; }
+.cp-person .r { margin: .1rem 0 0; color: var(--muted); font-size: .78rem; line-height: 1.3; }
+
+/* ---------- Derbies and rivals ---------- */
+.cp-derbies { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.cp-derby { display: flex; flex-direction: column; gap: .65rem; padding: 1.15rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; }
+.cp-vs { display: flex; align-items: center; gap: .75rem; }
+.cp-vs img { height: 3rem; width: 3rem; object-fit: contain; }
+.cp-vs span { color: var(--muted); font-size: .8rem; }
+.cp-derby h3 { font-family: 'Cinzel', serif; font-size: 1.05rem; color: #fff; margin: 0; }
+.cp-derby p { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.1rem; line-height: 1.55; margin: 0; flex: 1; }
+.cp-derby a.cp-link { font-size: .85rem; color: var(--amber); text-decoration: none; }
+.cp-derby a.cp-link:hover { text-decoration: underline; }
+.cp-rivals { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.cp-rival { display: flex; align-items: center; gap: .8rem; padding: .7rem .85rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; text-decoration: none; }
+.cp-rival:hover { border-color: var(--club-accent); }
+.cp-rival img { height: 2.6rem; width: 2.6rem; object-fit: contain; }
+.cp-rival .n { margin: 0; color: #fff; font-size: .9rem; font-weight: 700; }
+.cp-rival .r { margin: 0; color: var(--muted); font-size: .76rem; }
+.cp-meter { display: block; height: 4px; margin-top: .35rem; background: rgba(255,255,255,.12); border-radius: 2px; overflow: hidden; }
+.cp-meter i { display: block; height: 100%; background: var(--club-accent); }
+
+/* ---------- Chants, supporters, quotes ---------- */
+.cp-chants { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.cp-chant { margin: 0; padding: 1.1rem 1.25rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--club-accent); border-radius: .4rem; }
+.cp-chant figcaption { font-family: 'Cinzel', serif; color: #fff; font-size: 1rem; margin-bottom: .6rem; }
+.cp-chant p { margin: 0; white-space: pre-line; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.15rem; line-height: 1.55; }
+.cp-bar { display: flex; height: 1.4rem; border-radius: .3rem; overflow: hidden; }
+.cp-bar span { height: 100%; }
+.cp-bar-legend { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin: .8rem 0 0; padding: 0; font-size: .82rem; color: #b6c2cc; }
+.cp-bar-legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; margin-right: .4rem; }
+.cp-fanclubs { margin-top: 1.5rem; }
+.cp-quotes { display: grid; gap: 1rem; margin-top: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+.cp-quote { margin: 0; padding: 1.1rem 1.25rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; display: flex; flex-direction: column; gap: .7rem; }
+.cp-quote p { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.2rem; line-height: 1.5; color: #e5eef2; }
+.cp-quote footer { margin-top: auto; font-size: .78rem; color: var(--club-accent); text-align: right; }
+.cp-quote--long { grid-column: 1 / -1; }
+.cp-quote--long p { font-style: normal; max-width: 46rem; }
+.cp-quote .cp-doc { font-size: .75rem; color: var(--muted); }
+
+/* ---------- Fixtures ---------- */
+.cp-fixtures-wrap { position: relative; }
+.cp-fixtures { display: flex; gap: 1rem; overflow-x: auto; padding: .5rem .25rem 1rem; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.cp-match { flex: 0 0 11rem; scroll-snap-align: start; position: relative; padding: .75rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--card); text-align: center; }
+.cp-match.win { background: rgba(22,101,52,.32); }
+.cp-match.draw { background: rgba(133,77,14,.32); }
+.cp-match.loss { background: rgba(153,27,27,.32); }
+.cp-match.next { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
+.cp-match .date { font-size: .78rem; color: #b6c2cc; margin: 0 0 .5rem; }
+.cp-match .teams { display: flex; align-items: center; justify-content: center; gap: .5rem; }
+.cp-match .teams img { height: 2.2rem; width: 2.2rem; object-fit: contain; }
+.cp-match .mid { font-weight: 700; color: #fff; min-width: 2.6rem; }
+.cp-match .comp { height: 1.7rem; width: auto; margin: .55rem auto 0; display: block; }
+.cp-match .tag { position: absolute; top: -.55rem; right: .5rem; padding: .05rem .5rem; font-size: .68rem; font-weight: 700; background: var(--amber); color: #111; border-radius: 999px; }
+.cp-scroll-btn { position: absolute; top: 50%; transform: translateY(-60%); width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1px solid var(--line); background: rgba(13,24,40,.92); color: #fff; cursor: pointer; z-index: 2; }
+.cp-scroll-btn:hover { border-color: var(--club-accent); }
+.cp-scroll-btn.prev { left: -.6rem; }
+.cp-scroll-btn.next { right: -.6rem; }
+
+/* ---------- Kits ---------- */
+.cp-kits { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); max-width: 42rem; }
+.cp-kit { text-align: center; padding: 1rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; }
+.cp-kit-face { width: 66%; margin: 0 auto .6rem; cursor: pointer; }
+.cp-kit-face .hidden { display: none; }
+.cp-kit p { margin: 0; font-size: .85rem; color: #b6c2cc; }
+.cp-hint { color: var(--muted); font-size: .8rem; margin: .8rem 0 0; }
+
+/* ---------- Empty and error states ---------- */
+.cp-missing { text-align: center; padding: 4rem 1rem; }
+.cp-missing h1 { font-family: 'Cinzel', serif; color: #fff; font-size: 1.8rem; margin-bottom: .75rem; }
+.cp-missing a { color: var(--amber); }
+
+/* ---------- The Vanished XI (fog page) ---------- */
+body.fog-page { --club-primary: #0b0c0b; --club-accent: #9fc0c6; --bg: #070c10; }
+.fog-shell { position: relative; }
+.fog-layer { position: fixed; inset: -20%; pointer-events: none; z-index: 0; background:
+  radial-gradient(40% 30% at 20% 30%, rgba(159,192,198,.10), transparent 70%),
+  radial-gradient(45% 35% at 75% 60%, rgba(159,192,198,.09), transparent 70%),
+  radial-gradient(35% 25% at 50% 90%, rgba(159,192,198,.07), transparent 70%); }
+@media (prefers-reduced-motion: no-preference) {
+  .fog-layer { animation: fogdrift 70s ease-in-out infinite alternate; }
+  .fog-layer.two { animation-duration: 95s; animation-direction: alternate-reverse; opacity: .8; }
+  .eleven span { animation: flicker 7s ease-in-out infinite; }
+  .eleven span:nth-child(3n) { animation-delay: -2s; }
+  .eleven span:nth-child(3n+1) { animation-delay: -4.5s; }
+  .eleven span:nth-child(5n) { animation-duration: 11s; }
+}
+@keyframes fogdrift { from { transform: translate3d(-4%, -2%, 0) scale(1); } to { transform: translate3d(4%, 3%, 0) scale(1.08); } }
+@keyframes flicker { 0%, 100% { opacity: .18; } 50% { opacity: .85; } }
+.fog-content { position: relative; z-index: 1; }
+.fog-hero { text-align: center; padding: 3.5rem 1rem 2rem; }
+.fog-hero img { width: 7rem; height: auto; margin: 0 auto 1.5rem; opacity: .8; filter: drop-shadow(0 0 22px rgba(159,192,198,.35)); }
+.fog-hero h1 { font-family: 'Cinzel', serif; color: #e8f1f3; font-weight: 600; font-size: clamp(2rem, 6vw, 3.4rem); margin: 0; letter-spacing: .05em; }
+.fog-hero .cp-nick { color: #9fc0c6; }
+.fog-hero .cp-slogan { color: #8aa0a6; font-size: 1.35rem; }
+.eleven { display: flex; justify-content: center; gap: .7rem; margin: 2rem 0 .6rem; }
+.eleven span { width: .55rem; height: .55rem; border-radius: 50%; background: #cfe3e7; opacity: .2; }
+.fog-caption { text-align: center; color: #6f858b; font-size: .85rem; font-style: italic; margin: 0; }
+.fog-unrecorded { max-width: 42rem; margin: 2.5rem auto 0; }
+.fog-unrecorded .cp-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fog-unrecorded .cp-fact { background: rgba(255,255,255,.03); }
+.fog-page .cp-timeline { border-left-color: rgba(159,192,198,.35); }
+.fog-page .cp-era::before { background: #9fc0c6; box-shadow: 0 0 0 4px var(--bg), 0 0 14px rgba(159,192,198,.5); }
+.fog-page .cp-era-body p { color: #c3d3d6; }
+.fog-page .cp-era-body .hl { color: #cfe3e7; }
+.fog-page .cp-card, .fog-page .cp-quote { background: rgba(255,255,255,.03); }
+.fog-narrow { max-width: 46rem; margin: 3.5rem auto 0; }
+
+/* ---------- Club directory ---------- */
+.pg-head h1 { font-family: 'Cinzel', serif; color: #fff; font-weight: 700; font-size: clamp(1.9rem, 4vw, 2.6rem); margin: 0 0 .5rem; }
+.pg-head p { color: #b6c2cc; max-width: 40rem; margin: 0 0 1.5rem; line-height: 1.6; }
+.cd-controls { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); margin-bottom: 1rem; }
+.cd-controls label { display: block; font-size: .74rem; color: var(--muted); margin-bottom: .25rem; }
+.cd-controls input, .cd-controls select { width: 100%; padding: .55rem .7rem; font: inherit; font-size: .9rem; color: #fff; background: #101d31; border: 1px solid var(--line); border-radius: .4rem; }
+.cd-count { color: var(--muted); font-size: .85rem; margin: 0 0 1rem; }
+.cd-filter-chip { display: inline-flex; align-items: center; gap: .5rem; margin: 0 .5rem 1rem 0; padding: .25rem .4rem .25rem .8rem; font-size: .82rem; color: #fff; border: 1px solid var(--amber); border-radius: 999px; }
+.cd-filter-chip button { border: 0; background: transparent; color: var(--amber); cursor: pointer; font-size: 1rem; line-height: 1; }
+.cd-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.cd-card { display: flex; gap: .9rem; height: 100%; padding: .9rem; text-decoration: none; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; transition: border-color .2s, transform .2s; }
+.cd-card:hover { border-color: var(--amber); }
+@media (prefers-reduced-motion: no-preference) { .cd-card:hover { transform: translateY(-2px); } }
+.cd-card img { width: 3.6rem; height: 3.6rem; object-fit: contain; flex-shrink: 0; }
+.cd-card h3 { font-family: 'Cinzel', serif; color: #fff; font-size: 1rem; line-height: 1.2; margin: 0; }
+.cd-card p { margin: .15rem 0 0; font-size: .8rem; color: #b6c2cc; line-height: 1.4; }
+.cd-card .nick { font-style: italic; color: var(--muted); }
+.cd-card .honors { color: var(--amber); }
+.cd-badge { display: inline-block; margin-top: .4rem; padding: .05rem .55rem; border-radius: 999px; font-size: .7rem; font-weight: 700; color: #0b1320; }
+.cd-empty { color: var(--muted); padding: 2rem 0; }
+
+/* ---------- Roll of honour ---------- */
+.ho-nav { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .6rem; margin: 0 0 1.5rem; position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: .6rem; }
+.ho-nav a { flex: 0 0 auto; padding: .3rem .8rem; font-size: .82rem; color: #b6c2cc; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; }
+.ho-nav a:hover { color: #fff; border-color: var(--amber); }
+.ho-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: .6rem; }
+.ho-table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 34rem; }
+.ho-table th, .ho-table td { padding: .55rem .8rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.ho-table th { font-size: .74rem; color: var(--muted); font-weight: 400; background: rgba(255,255,255,.03); }
+.ho-table tr:last-child td { border-bottom: 0; }
+.ho-table td.y { color: #fff; font-weight: 700; width: 4.5rem; font-variant-numeric: tabular-nums; }
+.ho-table td.none { color: #56626f; }
+.ho-club { display: inline-flex; align-items: center; gap: .45rem; color: #dbe6ec; text-decoration: none; margin-right: .6rem; }
+.ho-club:hover { color: var(--amber); text-decoration: underline; }
+.ho-club img { height: 1.35rem; width: 1.35rem; object-fit: contain; }
+.ho-tag { display: inline-block; margin-left: .25rem; padding: 0 .45rem; font-size: .68rem; font-weight: 700; color: #0b1320; background: var(--amber); border-radius: 999px; }
+.ho-tag.joint { background: #b6c2cc; }
+.ho-decade { font-family: 'Cinzel', serif; color: #fff; font-size: 1.25rem; margin: 2.2rem 0 .8rem; scroll-margin-top: 4rem; }
+.ho-note { color: var(--muted); font-size: .82rem; margin: .8rem 0 0; max-width: 42rem; line-height: 1.55; }
+.ho-num { text-align: right !important; font-variant-numeric: tabular-nums; width: 5rem; }
+.ho-show-more { display: inline-block; margin: .75rem 0 0; padding: .45rem 1.1rem; font-size: .82rem; color: #b6c2cc; background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; }
+.ho-show-more:hover { color: #fff; border-color: var(--amber); }
+
+/* ---------- Derbies ---------- */
+.dv-cat { margin-top: 3rem; }
+.dv-cat h2 { font-family: 'Cinzel', serif; color: #fff; font-size: 1.4rem; margin: 0 0 .35rem; }
+.dv-cat > p { color: #b6c2cc; max-width: 40rem; margin: 0 0 1.25rem; line-height: 1.55; }
+.dv-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); }
+.dv-derby .cp-vs a { display: inline-flex; }
+.dv-links { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .85rem; }
+.dv-links a { color: var(--amber); text-decoration: none; }
+.dv-links a:hover { text-decoration: underline; }
+
+/* ---------- Traditions ---------- */
+.cp-traditions { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.cp-traditions li { padding: 1rem 1.15rem; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--club-accent); border-radius: .4rem; }
+.cp-traditions strong { display: block; margin-bottom: .3rem; font-family: 'Cinzel', serif; font-weight: 600; font-size: .98rem; color: #fff; }
+.cp-traditions span { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.12rem; line-height: 1.5; color: var(--text); }

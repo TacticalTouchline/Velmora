@@ -2,30 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script>document.documentElement.classList.add('js');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velmora club</title>
+  <title>Derbies — Velmora</title>
+  <meta name="description" content="The derbies of Velmora and the old arguments behind them." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" id="favicon" href="favicon.png" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/club.css" />
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const club = params.get('club');
-    if (club) {
-      document.title = club;
-      document.getElementById('favicon').href = `assets/logos/clubs/${encodeURIComponent(club)}.png`;
-    }
-  </script>
 </head>
 <body class="club-page">
   <div class="cp-shell">
     <div id="site-nav"></div>
-    <main id="club-container"><p class="cp-missing">Loading the club…</p></main>
+    <main id="page">
+      <header class="pg-head">
+        <h1>The Derbies</h1>
+        <p>Every derby in the country is one of a few old arguments, replayed with a ball. Here they are, grouped by the argument.</p>
+      </header>
+      <div id="content"><p class="cd-empty">Loading…</p></div>
+    </main>
   </div>
-  <script type="module" src="js/clubPage.js"></script>
+  <script type="module" src="js/derbies.js"></script>
 </body>
 </html>

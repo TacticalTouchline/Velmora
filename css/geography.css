@@ -1,0 +1,132 @@
+/* Geography page (geography.html): a 3D explorable terrain built from
+   assets/3d/geo-diffuse.png (the painted map, frame cropped) and
+   assets/3d/geo-heightmap.png (elevation derived from it). Palette and type
+   follow css/styles.css / css/map.css so this reads as part of the same
+   site, not a bolted-on demo. */
+
+.geo-stage {
+  position: relative;
+  width: 100%;
+  height: 84vh;
+  min-height: 480px;
+  max-height: 920px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #0d1b2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#geo-canvas-container { position: absolute; inset: 0; }
+#geo-canvas-container canvas { display: block; }
+
+/* ---------- Loading state ---------- */
+.geo-loading {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem;
+  background: #0d1b2a; color: #cbd5e1; font-size: .9rem;
+  transition: opacity .4s ease;
+}
+.geo-loading.is-hidden { opacity: 0; pointer-events: none; }
+.geo-spinner {
+  width: 2rem; height: 2rem; border-radius: 50%;
+  border: 3px solid rgba(251, 191, 36, .25); border-top-color: var(--amber);
+  animation: geo-spin 0.9s linear infinite;
+}
+@keyframes geo-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Overlay chrome ---------- */
+.geo-overlay-top {
+  position: absolute; top: .85rem; left: .85rem; right: .85rem; z-index: 3;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem;
+  pointer-events: none;
+}
+.geo-overlay-top > * { pointer-events: auto; }
+
+.geo-chip {
+  font-family: 'Cinzel', serif; letter-spacing: .06em; font-size: .78rem;
+  color: #fcd34d; background: rgba(13, 27, 42, .6); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.12); border-radius: .5rem; padding: .5rem .8rem;
+}
+
+.geo-controls { display: flex; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+.geo-btn {
+  font-size: .78rem; color: #dbe6ec; background: rgba(13, 27, 42, .6); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.14); border-radius: .5rem; padding: .5rem .75rem;
+  cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+}
+.geo-btn:hover { color: #fff; border-color: var(--amber); }
+.geo-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.geo-btn[aria-pressed="true"] { color: #0d1b2a; background: var(--amber); border-color: var(--amber); }
+
+/* ---------- Region label markers (HTML overlay, positioned each frame) ---------- */
+.geo-marker {
+  position: absolute; z-index: 2; transform: translate(-50%, -100%);
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  cursor: pointer; pointer-events: auto; white-space: nowrap;
+}
+.geo-marker-dot {
+  width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid rgba(13,27,42,.9);
+  box-shadow: 0 0 10px rgba(0,0,0,.6);
+  transition: transform .2s ease;
+}
+.geo-marker:hover .geo-marker-dot, .geo-marker:focus-visible .geo-marker-dot { transform: scale(1.3); }
+.geo-marker-label {
+  font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .04em;
+  color: #f1f5f9; background: rgba(13, 27, 42, .62); padding: .2rem .55rem;
+  border-radius: .3rem; border: 1px solid rgba(255,255,255,.1);
+}
+.geo-marker.is-mystery .geo-marker-dot { background: #94a3b8; box-shadow: 0 0 12px #94a3b8; }
+.geo-marker.is-mystery .geo-marker-label { color: #cbd5e1; font-style: italic; }
+#geo-markers-layer.is-hidden { display: none; }
+
+/* ---------- Region quick-jump, under the drag/zoom hint chip ---------- */
+.geo-legend-overlay {
+  position: absolute; z-index: 3; top: 4.2rem; left: .85rem;
+  max-width: min(480px, calc(100% - 1.7rem));
+  display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.geo-legend-overlay .map-legend-btn {
+  background: rgba(13, 27, 42, .6); backdrop-filter: blur(6px); flex-shrink: 0;
+}
+
+/* ---------- No-WebGL fallback ---------- */
+.geo-fallback {
+  display: none; padding: 2.5rem 1.5rem; text-align: center; color: #9ca3af;
+  border: 1px dashed rgba(255,255,255,.15); border-radius: .5rem; margin-top: 1rem;
+}
+.geo-fallback a { color: var(--amber); }
+
+/* ---------- Region/club info panel: floats over the map, doesn't take page
+   layout space -- top-right corner on wide screens, a bottom sheet on
+   narrow ones (thumb-reachable, and doesn't cover the terrain). ---------- */
+.geo-panel {
+  position: absolute; z-index: 4;
+  top: 4.2rem; right: .85rem; width: min(340px, calc(100% - 1.7rem));
+  max-height: calc(100% - 5.6rem); overflow-y: auto;
+  background: rgba(13, 27, 42, .78); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12); border-radius: .6rem;
+  padding: 1.1rem 1.3rem 1.3rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.geo-panel.is-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+.geo-panel-close {
+  position: absolute; top: .6rem; right: .6rem; width: 1.6rem; height: 1.6rem;
+  display: flex; align-items: center; justify-content: center;
+  color: #9ca3af; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%; font-size: 1rem; line-height: 1; cursor: pointer;
+}
+.geo-panel-close:hover { color: #fff; border-color: var(--amber); }
+
+@media (max-width: 700px) {
+  .geo-panel {
+    top: auto; bottom: 4rem; left: .85rem; right: .85rem; width: auto;
+    max-height: 46%;
+  }
+}
+
+.geo-panel-city-list { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; padding: 0; list-style: none; }
+.geo-panel-city-list li {
+  font-size: .8rem; color: #dbe6ec; background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: .3rem .75rem;
+}

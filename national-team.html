@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velmoran Football Association</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/national-team.css" />
+</head>
+<body>
+  <div class="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+
+    <!-- Nav -->
+    <div id="site-nav"></div>
+
+    <!-- Hero -->
+    <header class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+      <img src="assets/velmora-fa-crest.png" alt="Crest of the Velmoran Football Association: a hawk over a red shield" class="h-32 w-auto flex-shrink-0" />
+      <div class="text-center md:text-left">
+        <p class="text-amber-400/80 text-sm tracking-wide mb-2">Est. 1896</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight mb-3">Velmoran Football Association</h1>
+        <p class="text-gray-300 leading-relaxed max-w-xl">
+          The governing body of Velmoran football — the domestic pyramid, its competitions, and the national side, the Hawks, that both founding peoples send out together.
+        </p>
+      </div>
+    </header>
+
+    <!-- Quick facts -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pb-12 mb-12 border-b border-white/10 text-center">
+      <div>
+        <p class="text-2xl font-bold text-white" style="font-family:'Cinzel',serif;">1896</p>
+        <p class="text-xs text-gray-400 mt-1 uppercase tracking-wide">Federation Founded</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white" style="font-family:'Cinzel',serif;">1904</p>
+        <p class="text-xs text-gray-400 mt-1 uppercase tracking-wide">Joined World Body</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white" style="font-family:'Cinzel',serif;">1954</p>
+        <p class="text-xs text-gray-400 mt-1 uppercase tracking-wide">Joined Continental Body</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-white" style="font-family:'Cinzel',serif;">62,500</p>
+        <p class="text-xs text-gray-400 mt-1 uppercase tracking-wide">Stadion Valdren Capacity</p>
+      </div>
+    </div>
+
+    <!-- The badge -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-white mb-4">The Badge</h2>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+        The hawk is the clans'. The red shield is the union banner that still hangs above the old wall-hangings in the Hall at Valdren, where the Charter was signed in 1891. The laurel wreath was added by a British engraver in 1896, and nobody has dared remove it.
+      </p>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+        The national flag is a different thing: a gold hawk on navy, adopted after the Charter. The gold is the forge-light of the Kovarai, and the navy is the sea both peoples crossed to get here.
+      </p>
+    </section>
+
+    <!-- The Federation -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-white mb-4">The Federation</h2>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+        The Velmoran Football Association was constituted in 1896, five years after the republic's founding, by eleven delegates: six from the lakes and the western farms, five from the foundry towns. It applied for recognition by the world governing body the year it was itself established, and was admitted in 1904.
+      </p>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+        During the coast occupation, its membership of the world body was kept alive by letters carried out through neutral Stockholm. When the ports were freed in the spring of 1945 the association's secretary produced the whole file, dues paid to date.
+      </p>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+        In 1954 the association became a founding member of the continental body. Recognition took another half century.
+      </p>
+    </section>
+
+    <!-- Stadium -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-white mb-4">Stadion Valdren</h2>
+      <img src="assets/stadiums/Stadion%20Valdren.png" alt="Stadion Valdren at dusk, a hawk flag flying above its steel roof structure" class="w-full rounded-lg mb-4 border border-white/10" />
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+        Sixty-two thousand five hundred seats is a large ground for a federation with Velmora's reputation, and the stadium rarely comes close to full outside a handful of fixtures a year. It was begun in 1899 on the old moot field beside the Hall and open by 1902, when the republic was barely a decade removed from the Great Collapse. It was built to the scale it was on purpose: a republic raising something too big for the team it had, on the theory that the country would grow into it eventually. It has been rebuilt twice since.
+      </p>
+      <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+        By tradition, no club plays a league match there. The stadium belongs to the Republic, not to anyone. The Velmoran Cup Final is the one day a club sets foot in it, and even Valdren Atletika, who have won more Cups than anyone, play their home games at the Titan Forge Arena.
+      </p>
+    </section>
+
+    <!-- ===================== TABS ===================== -->
+    <div class="tabs" data-tabs>
+      <div class="tabs-nav" role="tablist" aria-label="Velmoran football">
+        <button type="button" role="tab" id="tab-btn-pyramid" aria-controls="tab-pyramid" aria-selected="true" data-tab="pyramid">The Football Pyramid</button>
+        <button type="button" role="tab" id="tab-btn-team" aria-controls="tab-team" aria-selected="false" data-tab="team">National Team</button>
+      </div>
+
+      <!-- ============ PYRAMID TAB ============ -->
+      <div class="tab-panel" id="tab-pyramid" role="tabpanel" aria-labelledby="tab-btn-pyramid">
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-4">Three Tiers, Four Regions</h2>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-8">
+            Seventy-five clubs play under the Association across three tiers. The Velmoran Super League sits at the top, the Velmoran National Liga below it, and beneath both, the country splits into four regional leagues — East, West, North, and South — each drawing its ten clubs from whichever towns are closest to reach on a Saturday, not from the five cultural regions of the country. A club from the Eastern Reaches and a club from the Southern Lakes can easily end up in the same regional league, and usually nobody but the fixture secretary notices.
+          </p>
+
+          <!-- Pyramid illustration: promotion/relegation zones are drawn directly
+               into the shape as color bands, not listed separately afterward. -->
+          <div class="pyramid-illustration">
+            <svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Velmoran football pyramid: Super League, National Liga, and four Regional Leagues, with promotion and relegation zones marked">
+
+              <!-- Regional base (drawn first, sits behind/below the other two bands) -->
+              <polygon points="210,350 690,350 790,540 110,540" fill="#5b3a29" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
+              <!-- quadrant dividers -->
+              <line x1="330" y1="350" x2="280" y2="540" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+              <line x1="450" y1="350" x2="450" y2="540" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+              <line x1="570" y1="350" x2="620" y2="540" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+              <!-- promotion marker, one per quadrant -->
+              <polygon points="232.5,368 224,382 241,382" fill="#4ade80" />
+              <polygon points="377.5,368 369,382 386,382" fill="#4ade80" />
+              <polygon points="522.5,368 514,382 531,382" fill="#4ade80" />
+              <polygon points="667.5,368 659,382 676,382" fill="#4ade80" />
+
+              <!-- Velmoran National Liga -->
+              <polygon points="300,170 600,170 690,350 210,350" fill="#6b7280" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+              <polygon points="300,170 600,170 612,194 288,194" fill="#4ade80" fill-opacity="0.55" />
+              <polygon points="222,326 678,326 690,350 210,350" fill="#f87171" fill-opacity="0.55" />
+
+              <!-- Velmoran Super League -->
+              <polygon points="370,30 530,30 600,170 300,170" fill="#c9a227" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+              <polygon points="370,30 530,30 542,54 358,54" fill="#38bdf8" fill-opacity="0.55" />
+              <polygon points="312,146 588,146 600,170 300,170" fill="#f87171" fill-opacity="0.55" />
+
+              <!-- Logos -->
+              <image href="assets/logos/competitions/VSL.png" x="402" y="44" width="96" height="96" />
+              <image href="assets/logos/competitions/VNN.png" x="402" y="214" width="96" height="96" />
+              <image href="assets/logos/competitions/VERL.png" x="184.5" y="392" width="96" height="96" />
+              <image href="assets/logos/competitions/VWRL.png" x="329.5" y="392" width="96" height="96" />
+              <image href="assets/logos/competitions/VNRL.png" x="474.5" y="392" width="96" height="96" />
+              <image href="assets/logos/competitions/VSRL.png" x="619.5" y="392" width="96" height="96" />
+
+              <!-- Tier labels -->
+              <text x="450" y="164" text-anchor="middle" fill="#fff" font-weight="700" font-size="13" font-family="Cinzel, serif">Super League · 17</text>
+              <text x="450" y="330" text-anchor="middle" fill="#fff" font-weight="700" font-size="13" font-family="Cinzel, serif">National Liga · 18</text>
+              <text x="232.5" y="508" text-anchor="middle" fill="#fff" font-weight="600" font-size="11" font-family="Cinzel, serif">East · 10</text>
+              <text x="377.5" y="508" text-anchor="middle" fill="#fff" font-weight="600" font-size="11" font-family="Cinzel, serif">West · 10</text>
+              <text x="522.5" y="508" text-anchor="middle" fill="#fff" font-weight="600" font-size="11" font-family="Cinzel, serif">North · 10</text>
+              <text x="667.5" y="508" text-anchor="middle" fill="#fff" font-weight="600" font-size="11" font-family="Cinzel, serif">South · 10</text>
+
+              <!-- Zone callouts, leader lines pointing back at the bands -->
+              <line x1="542" y1="42" x2="620" y2="42" stroke="#38bdf8" stroke-width="1.5" />
+              <text x="626" y="46" fill="#38bdf8" font-size="12" font-weight="600">1–3 → Continental</text>
+
+              <line x1="600" y1="158" x2="680" y2="158" stroke="#f87171" stroke-width="1.5" />
+              <text x="686" y="162" fill="#f87171" font-size="12" font-weight="600">14–17 → Playoff (2 down)</text>
+
+              <line x1="612" y1="182" x2="700" y2="182" stroke="#4ade80" stroke-width="1.5" />
+              <text x="706" y="186" fill="#4ade80" font-size="12" font-weight="600">1–2 → Super League</text>
+
+              <line x1="690" y1="338" x2="770" y2="338" stroke="#f87171" stroke-width="1.5" />
+              <text x="776" y="342" fill="#f87171" font-size="12" font-weight="600">15–18 → Regional</text>
+
+              <line x1="676" y1="375" x2="770" y2="375" stroke="#4ade80" stroke-width="1.5" />
+              <text x="776" y="379" fill="#4ade80" font-size="12" font-weight="600">1st → National Liga</text>
+
+            </svg>
+          </div>
+
+          <!-- Promotion/relegation legend — same colors as the illustration above,
+               spelled out for anyone who wants the exact rule rather than the shape. -->
+          <div class="pyramid-legend">
+            <span><i class="legend-dot" style="background:#38bdf8;"></i>Continental qualification</span>
+            <span><i class="legend-dot" style="background:#4ade80;"></i>Promotion</span>
+            <span><i class="legend-dot" style="background:#f87171;"></i>Relegation</span>
+          </div>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-6">The Cups</h2>
+
+          <div class="mb-10">
+            <div class="flex items-center gap-3 mb-3">
+              <img src="assets/logos/competitions/TVC.png" alt="The Velmoran Cup" class="h-8 w-8 object-contain" />
+              <p class="text-white font-semibold">The Velmoran Cup</p>
+            </div>
+            <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-4">
+              Open to the Super League and most of the National Liga — 17 VSL clubs plus 15 VNN clubs, 32 in total. Straight knockout from the Round of 16 onward, and it settles the one day a year a club plays at Stadion Valdren.
+            </p>
+          <div class="bracket-illustration">
+<svg viewBox="0 0 820 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tournament stages narrowing from group stage to final">
+<polygon points="185.0,40.0 230.0,59.05 230.0,130.95 185.0,150.0" fill="#fbbf24" fill-opacity="0.25" />
+<polygon points="320.0,59.05 365.0,72.5 365.0,117.5 320.0,130.95" fill="#fbbf24" fill-opacity="0.25" />
+<polygon points="455.0,72.5 500.0,82.0 500.0,108.0 455.0,117.5" fill="#fbbf24" fill-opacity="0.25" />
+<polygon points="590.0,82.0 635.0,82.0 635.0,108.0 590.0,108.0" fill="#fbbf24" fill-opacity="0.25" />
+<rect x="95.0" y="40.0" width="90" height="110.0" rx="6" fill="#fbbf24" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="140.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">32</text>
+<text x="140.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Group Stage</text>
+<rect x="230.0" y="59.0" width="90" height="71.9" rx="6" fill="#fbbf24" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="275.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">16</text>
+<text x="275.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Round of 16</text>
+<rect x="365.0" y="72.5" width="90" height="45.0" rx="6" fill="#fbbf24" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="410.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">8</text>
+<text x="410.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Quarter-Final</text>
+<rect x="500.0" y="82.0" width="90" height="26.0" rx="6" fill="#fbbf24" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="545.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">4</text>
+<text x="545.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Semi-Final</text>
+<rect x="635.0" y="82.0" width="90" height="26" rx="6" fill="#fbbf24" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<image href="assets/trophies/TVC.png" x="637.0" y="47.0" width="96" height="96" />
+<text x="680.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Final</text>
+</svg>
+          </div>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <img src="assets/logos/competitions/VHC.png" alt="The Velmoran Heritage Cup" class="h-8 w-8 object-contain" />
+              <p class="text-white font-semibold">The Velmoran Heritage Cup</p>
+            </div>
+            <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-4">
+              The regional leagues' own cup — all 40 clubs across East, West, North, and South. No club has lifted it yet.
+            </p>
+          <div class="bracket-illustration">
+<svg viewBox="0 0 820 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tournament stages narrowing from group stage to final">
+<polygon points="185.0,40.0 230.0,62.6 230.0,127.4 185.0,150.0" fill="#94a3b8" fill-opacity="0.25" />
+<polygon points="320.0,62.6 365.0,73.95 365.0,116.05 320.0,127.4" fill="#94a3b8" fill-opacity="0.25" />
+<polygon points="455.0,73.95 500.0,82.0 500.0,108.0 455.0,116.05" fill="#94a3b8" fill-opacity="0.25" />
+<polygon points="590.0,82.0 635.0,82.0 635.0,108.0 590.0,108.0" fill="#94a3b8" fill-opacity="0.25" />
+<rect x="95.0" y="40.0" width="90" height="110.0" rx="6" fill="#94a3b8" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="140.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">40</text>
+<text x="140.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Group Stage</text>
+<rect x="230.0" y="62.6" width="90" height="64.8" rx="6" fill="#94a3b8" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="275.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">16</text>
+<text x="275.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Round of 16</text>
+<rect x="365.0" y="74.0" width="90" height="42.1" rx="6" fill="#94a3b8" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="410.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">8</text>
+<text x="410.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Quarter-Final</text>
+<rect x="500.0" y="82.0" width="90" height="26.0" rx="6" fill="#94a3b8" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<text x="545.0" y="100.0" text-anchor="middle" fill="#0d1b2a" font-weight="700" font-size="18" font-family="Cinzel, serif">4</text>
+<text x="545.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Semi-Final</text>
+<rect x="635.0" y="82.0" width="90" height="26" rx="6" fill="#94a3b8" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+<image href="assets/trophies/VHC.png" x="637.0" y="47.0" width="96" height="96" />
+<text x="680.0" y="170.0" text-anchor="middle" fill="#9ca3af" font-size="11">Final</text>
+</svg>
+          </div>
+          </div>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-6">League Trophies</h2>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-6">
+            The Super League and National Liga titles, and the four regional trophies awarded each spring.
+          </p>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-6 text-center">
+            <div>
+              <img src="assets/trophies/VSL.png" alt="Velmoran Super League trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">Super League</p>
+            </div>
+            <div>
+              <img src="assets/trophies/VNN.png" alt="Velmoran National Liga trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">National Liga</p>
+            </div>
+            <div>
+              <img src="assets/trophies/VERL.png" alt="East Regional League trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">East League</p>
+            </div>
+            <div>
+              <img src="assets/trophies/VWRL.png" alt="West Regional League trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">West League</p>
+            </div>
+            <div>
+              <img src="assets/trophies/VNRL.png" alt="North Regional League trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">North League</p>
+            </div>
+            <div>
+              <img src="assets/trophies/VSRL.png" alt="South Regional League trophy" class="w-24 h-24 object-contain mx-auto mb-2" />
+              <p class="text-xs text-gray-400">South League</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-4">Youth Football</h2>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+            Below the senior pyramid, U19 sides play in five regional groups, alongside a standalone Youth Cup open across all five. It's the pathway every academy in the country feeds into before a player is old enough to matter to the senior game.
+          </p>
+        </section>
+
+      </div>
+
+      <!-- ============ NATIONAL TEAM TAB ============ -->
+      <div class="tab-panel hidden" id="tab-team" role="tabpanel" aria-labelledby="tab-btn-team">
+
+        <section class="mb-12">
+          <p class="text-amber-400/80 text-sm tracking-wide mb-2">#HaukenXI</p>
+          <h2 class="text-2xl font-bold text-white mb-4">The Hawks</h2>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+            Velmora's national side plays out of Stadion Valdren, in the capital built to hold both founding peoples' names. The badge carries the same hawk that marked Velmar clan banners a thousand years before the republic existed.
+          </p>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-4">A Small Flag on a Big Continent</h2>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+            Velmora's reputation puts it among the smaller federations, in a footballing world where San Marino and Gibraltar are usually shorthand for the bottom of the table. Every qualifying draw puts the Hawks among the nations expected to make up the numbers rather than trouble them.
+          </p>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl mb-3">
+            The clubs have done better than the country. In 1968 Valdren Atletika won the European Cup, the only trophy of its kind a Velmoran side has ever lifted, and the national team has spent the decades since being asked why it can't do the same.
+          </p>
+          <p class="text-gray-300 leading-relaxed text-sm max-w-2xl">
+            Three years of continuous residency is enough to earn Velmoran citizenship, and with it, eligibility to play for the Hawks — a lower bar than most of the continent sets, and one the federation has never shown much interest in raising.
+          </p>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-6">Colors</h2>
+          <div class="grid grid-cols-2 gap-6 max-w-md">
+            <div>
+              <div class="h-24 rounded-md mb-3" style="background: linear-gradient(135deg, #16213e 60%, #d4af37 60%);"></div>
+              <p class="text-white text-sm font-semibold">Home</p>
+              <p class="text-gray-500 text-xs">Navy, gold trim</p>
+            </div>
+            <div>
+              <div class="h-24 rounded-md mb-3" style="background: linear-gradient(135deg, #f4f1e8 60%, #16213e 60%);"></div>
+              <p class="text-white text-sm font-semibold">Away</p>
+              <p class="text-gray-500 text-xs">Off-white, navy trim</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-white mb-6">Rivalries</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="border border-white/10 rounded-lg p-5">
+              <h3 class="text-lg font-bold text-white mb-2" style="font-family:'Cinzel',serif;">Norway</h3>
+              <p class="text-gray-300 text-sm leading-relaxed">The nearest of Velmora's neighbors across the Norwegian Sea, and the fixture that draws the biggest crowds to Stadion Valdren regardless of either side's form that year.</p>
+            </div>
+            <div class="border border-white/10 rounded-lg p-5">
+              <h3 class="text-lg font-bold text-white mb-2" style="font-family:'Cinzel',serif;">Iceland</h3>
+              <p class="text-gray-300 text-sm leading-relaxed">A smaller North Atlantic federation with the same underdog reputation Velmora carries into every larger tournament — the two sides have spent decades meeting each other on the way up or down a qualifying table.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mb-12">
+          <details class="border border-white/10 rounded-lg px-5 py-4 max-w-md">
+            <summary class="cursor-pointer text-amber-400 text-sm">Data sheet</summary>
+            <dl class="mt-4 divide-y divide-white/10 text-sm">
+              <div class="py-2 flex justify-between gap-6"><dt class="text-gray-400">Reputation</dt><dd class="text-white">1975</dd></div>
+              <div class="py-2 flex justify-between gap-6"><dt class="text-gray-400">Youth rating</dt><dd class="text-white">108</dd></div>
+              <div class="py-2 flex justify-between gap-6"><dt class="text-gray-400">Residency for citizenship</dt><dd class="text-white">3 years</dd></div>
+              <div class="py-2 flex justify-between gap-6"><dt class="text-gray-400">Stadion Valdren capacity</dt><dd class="text-white">62,500</dd></div>
+            </dl>
+          </details>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- More Velmoran football: the pages that don't fit as tabs -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-white mb-4">More Velmoran Football</h2>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <a href="clubs.html" class="block p-5 rounded-lg border border-white/10 hover:border-amber-400/60 transition">
+          <h3 class="text-white font-bold mb-1" style="font-family:'Cinzel',serif;">Clubs</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Every club in the country, filterable by region, league, and founding story.</p>
+        </a>
+        <a href="derbies.html" class="block p-5 rounded-lg border border-white/10 hover:border-amber-400/60 transition">
+          <h3 class="text-white font-bold mb-1" style="font-family:'Cinzel',serif;">Derbies and Rivalries</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">The old arguments Velmoran football keeps replaying, grouped by argument.</p>
+        </a>
+        <a href="honours.html" class="block p-5 rounded-lg border border-white/10 hover:border-amber-400/60 transition">
+          <h3 class="text-white font-bold mb-1" style="font-family:'Cinzel',serif;">Roll of Honour</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Champions of the Super League, the Cup, the National Liga and Europe, year by year.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <footer class="pt-10 border-t border-white/10 text-center">
+      <p class="text-gray-400 mb-6">For the country the Hawks represent, see the full history of Velmora.</p>
+      <a href="about.html" class="inline-block px-6 py-3 bg-amber-400/10 border border-amber-400/40 text-amber-400 rounded-md hover:bg-amber-400/20 transition text-sm tracking-wide">About Velmora</a>
+      <p class="text-gray-600 text-xs mt-10">&copy; 2026 Republic of Velmora.</p>
+    </footer>
+
+  </div>
+
+  <script src="js/national-team.js"></script>
+  <script type="module">
+    import { renderNav, wireNav } from './js/siteNav.js';
+    document.getElementById('site-nav').innerHTML = renderNav('fa-overview');
+    wireNav();
+  </script>
+</body>
+</html>

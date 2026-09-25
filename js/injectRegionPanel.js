@@ -3,7 +3,7 @@ export async function loadRegionPanel() {
   if (!panelContainer) return;
 
   try {
-    const res = await fetch('components/region-panel.html');
+    const res = await fetch('components/region-panel.html', { cache: 'no-store' });
     const html = await res.text();
     panelContainer.insertAdjacentHTML('beforeend', html);
   } catch (err) {

@@ -4,7 +4,7 @@ export async function loadInlineSVG(url, containerId) {
   if (!container) return;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: 'no-store' });
     const svgText = await response.text();
 
     // Inject the SVG inline so styles apply
